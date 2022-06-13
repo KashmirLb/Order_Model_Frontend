@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+    --primary: #354A67;
+    --primary-light: #4b6993;
+    --secondary: #4b5563;
+    --secondary-light: #9ca3af;
+    --remove: #dc2626;
+    --remove-light: #f87171;
+  }
+
+.primary-button{
+    background-color: var(--primary);
+    color: white;
+    transition: .1s all ease-in-out;
+}
+
+.primary-button:hover{
+    background-color: var(--primary-light);
+}
+
+.secondary-button{
+    background-color: var(--secondary);
+    color: white;
+    transition: .1s all ease-in-out;
+}
+.secondary-button:hover{
+    background-color: var(--secondary-light);
+}
+
+.remove-button{
+    background-color: var(--remove);
+    color: white;
+    transition: .1s all ease-in-out;
+
+}
+
+.remove-button:hover{
+    background-color: var(--remove-light);
+}
