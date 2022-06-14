@@ -17,5 +17,10 @@ module.exports = {
       }
     },
   },
+  variants: {
+    extend: {
+      backgroundColor: ['group-hover'],
+    }
+  },
   plugins: [],
 }

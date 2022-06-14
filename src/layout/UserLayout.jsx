@@ -1,11 +1,13 @@
 import { Outlet, Navigate } from "react-router-dom"
-import useUser  from "../hooks/useUser"
+import useAuth  from "../hooks/useAuth"
 import Header from "../components/Header"
 import Sidebar from "../components/Sidebar"
 
 const UserLayout = () => {
 
-    const { auth, loadingUser } = useUser()
+    const { auth, loading } = useAuth()
+
+    if(loading) return "Loading..."
 
   return (
         <>

@@ -1,20 +1,15 @@
-import useUser from "../hooks/useUser"
-import useAdmin from "../hooks/useAdmin"
-import { setColors } from "../helpers"
+import useAuth from "../hooks/useAuth"
 
 const Header = () => {
 
-    const { auth } = useUser()
-    const { admin } = useAdmin()
-
-    const { backgroundPrimary, textLight } = setColors(auth?._id ? "user" : "admin")
+    const { auth } = useAuth()
 
   return (
-    <header className={`${backgroundPrimary} py-5 md:flex justify-between items-center px-8`}>
-        <img src="/small-logo.png" alt="small-logo" className="mx-auto md:mx-0"/>
+    <header className={`${auth.adminId ? "bg-admin-primary" : "bg-user-primary"} py-5 md:flex justify-between items-center px-8`}>
+        <img src="/small-logo.png" alt="small-logo" className="mb-4 mx-auto md:m-0"/>
         <div className=" flex items-center gap-5">
-            <div className={`${textLight} text-xl font-bold`}>
-                Logged in as: <span className="text-almost-white">{auth?.name ? auth.name : admin.name}</span>
+            <div className={`${auth.adminId ? "text-admin-light" : "text-user-light"} text-xl font-bold`}>
+                Logged in as: <span className="text-almost-white">{auth?.name && auth.name}</span>
             </div>
             <button
                 type="button"

@@ -1,6 +1,5 @@
 import { useState } from "react"
-import useAdmin from "../hooks/useAdmin"
-import useUser from "../hooks/useUser"
+import useAuth from "../hooks/useAuth"
 import axiosClient from "../../config/axiosClient"
 import Alert from "../components/Alert"
 import { useNavigate } from "react-router-dom"
@@ -10,9 +9,7 @@ const Login = () => {
     const [ username, setUsername ] = useState("")
     const [ password, setPassword ] = useState("")
     const [ alert, setAlert ] = useState({})
-
-    const { changeAdmin } = useAdmin()
-    const { setAuth } = useUser()
+    const { setAuth, setLoading } = useAuth()
     const navigate = useNavigate()
 
     const handleSubmit = async e => {
@@ -32,13 +29,15 @@ const Login = () => {
             if(username.charAt(0)==="E"){
                 const { data } = await axiosClient.post('/admin/login', { username, password })
                 sessionStorage.setItem("admintoken", data.token)
-                changeAdmin(data)
+                setAuth(data)
+                setLoading(false)
                 navigate("/admin-console")
             }
             else{
                 const { data } = await axiosClient.post('/user/user-login', { username, password })
                 sessionStorage.setItem("usertoken", data.token)
                 setAuth(data)
+                setLoading(false)
                 navigate("/user")
             }
             

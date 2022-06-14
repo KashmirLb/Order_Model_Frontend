@@ -1,30 +1,29 @@
 import { Outlet, Navigate } from "react-router-dom"
-import useAdmin from "../hooks/useAdmin"
+import useAuth from "../hooks/useAuth"
 import Header from "../components/Header"
 import Sidebar from "../components/Sidebar"
 
 const AdminLayout = () => {
 
-    const { admin, loading, adminChecked } = useAdmin()
+    const { auth, loading } = useAuth()
 
     if (loading) return "Loading..."
 
   return (
         <>
             {
-                admin.adminId ? 
-                   adminChecked ? 
+                auth?.adminId ? 
                     (
                         <div>
                             <Header/>
                             <div className="md:flex min-h-screen bg-blue-100">
                                 <Sidebar/>
-                                <main>
+                                <main className="md:w-3/4 lg:w-4/5">
                                     <Outlet />
                                 </main>
                             </div>
                         </div>
-                    ) : <div> Checking ID....</div>
+                    ) 
                 : <Navigate to="/" />
             }
         </>
