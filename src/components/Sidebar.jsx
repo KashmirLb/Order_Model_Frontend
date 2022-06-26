@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar"
 const adminLinks =[
   {name: "Dashboard", link: "/admin-console"},
   {name: "Messages", link: "messages"},
-  {name: "Customers", link: "customers"},
+  {name: "Customers", link: "users"},
   {name: "All Orders", link: "orders"},
   {name: "All Items", link: "items"},
   {name: "Settings", link: "settings"},

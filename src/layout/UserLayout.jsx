@@ -7,15 +7,15 @@ const UserLayout = () => {
 
     const { auth, loading } = useAuth()
 
-    if(loading) return "Loading..."
+    if(loading) return <Spinner />
 
   return (
         <>
             {auth?._id ?  
             (
-                <div>
+                <div className="min-h-screen bg-almost-white overflow-hidden">
                     <Header />
-                    <div className="md:flex min-h-screen bg-almost-white">
+                    <div className="md:flex">
                         <Sidebar/>
                         <main>
                             <Outlet />

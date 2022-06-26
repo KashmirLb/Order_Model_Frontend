@@ -12,37 +12,38 @@ import Customer from './pages/Customer'
 import Orders from './pages/Orders'
 import Items from './pages/Items'
 import Settings from './pages/Settings'
+import { DataProvider } from './context/DataProvider'
 
 function App() {
  
   return (
-
     <BrowserRouter> 
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<NotAuthLayout />}>
-            <Route index element={<Login />} />
-          </Route>
-          <Route path="/admin-console" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard/>}/>
-            <Route path="messages" element={<Messages/>}/>
-            <Route path="customers" element={<Customers/>}/>
-            <Route path="customers/:id" element={<Customer/>}/>
-            <Route path="orders" element={<Orders/>}/>
-            <Route path="items" element={<Items/>}/>
-            <Route path="settings" element={<Settings/>}/>
-          </Route>
-          <Route path="/user" element={<UserLayout/>}>
-            <Route index element={<UserDashboard/>}/>
-            <Route path="messages" element={<Messages/>}/>
-            <Route path="orders" element={<Orders/>}/>
-            <Route path="items" element={<Items/>}/>
-            <Route path="settings" element={<Settings/>}/>
-          </Route>
-        </Routes>
+        <DataProvider>
+          <Routes>
+            <Route path="/" element={<NotAuthLayout />}>
+              <Route index element={<Login />} />
+            </Route>
+            <Route path="/admin-console" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard/>}/>
+              <Route path="messages" element={<Messages/>}/>
+              <Route path="users" element={<Customers/>}/>
+              <Route path="users/:id" element={<Customer/>}/>
+              <Route path="orders" element={<Orders/>}/>
+              <Route path="items" element={<Items/>}/>
+              <Route path="settings" element={<Settings/>}/>
+            </Route>
+            <Route path="/user" element={<UserLayout/>}>
+              <Route index element={<UserDashboard/>}/>
+              <Route path="messages" element={<Messages/>}/>
+              <Route path="orders" element={<Orders/>}/>
+              <Route path="items" element={<Items/>}/>
+              <Route path="settings" element={<Settings/>}/>
+            </Route>
+          </Routes>
+        </DataProvider>
       </AuthProvider>
     </BrowserRouter>
-   
   )
 }
 

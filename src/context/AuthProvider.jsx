@@ -9,7 +9,6 @@ const AuthProvider = ({children}) =>{
     const [ auth, setAuth ] = useState({})
     const [ loading, setLoading ] = useState(true)
     const [ searchList, setSearchList ] = useState([])
-    const [ customers, setCustomers ] = useState([])
 
     const navigate = useNavigate()
 
@@ -24,20 +23,22 @@ const AuthProvider = ({children}) =>{
         )
     }
 
-    const prepareSearchList = list =>{
-        const newCustomIdList = list.map( item =>{
+    const prepareSearchList = async () =>{
 
-            let customId = `${item.lastName}, ${item.name}`
-            let _id = item._id
-            return {_id, customId}
-        })
-        setSearchList([...newCustomIdList, ...list])
+        const adminToken = sessionStorage.getItem('admintoken')
+
+        try {
+            const { data } = await axiosClient('/admin/search-list', config(adminToken))
+           
+            setSearchList(data)
+        } catch (error) {
+            console.log(error.response.data.msg)
+        }
+
     }
    
     useEffect(()=> {
-
         const obtainUser = async () =>{
-            setLoading(true)
 
             const adminToken = sessionStorage.getItem('admintoken')
 
@@ -47,10 +48,7 @@ const AuthProvider = ({children}) =>{
     
                     setAuth(data)
                     navigate("/admin-console")
-
-                    const { data: search } = await axiosClient('/admin/search-list', config(adminToken))
-
-                    prepareSearchList(search)
+                    prepareSearchList()
                 } catch (error) {
                     console.log(error)
                 }
@@ -67,31 +65,14 @@ const AuthProvider = ({children}) =>{
     
                     setAuth(data)
                     navigate("/user")
-    
                 } catch (error) {
                     console.log(error)
                 }
             }
-
             setLoading(false)
         }
         obtainUser()
     },[])
-
-    const obtainCustomers = async () =>{
-
-        const adminToken = sessionStorage.getItem('admintoken')
-       
-        const { data } = await axiosClient('/user/user-list', config(adminToken))
-
-        const allActive = data.filter(user => user.activeOrder)
-        const nonActive = data.filter(user => !user.activeOrder)
-
-        const activeSorted = [...allActive].sort((a,b)=>new Date(b.comments[0].createdAt)- new Date(a.comments[0].createdAt))
-        const nonActiveSorted = [...nonActive].sort((a,b)=>new Date(b.comments[0].createdAt)- new Date(a.comments[0].createdAt))
-
-        setCustomers([...activeSorted, ...nonActiveSorted])
-    }
 
     return(
         <AuthContext.Provider
@@ -101,8 +82,7 @@ const AuthProvider = ({children}) =>{
                 loading,
                 setLoading,
                 searchList,
-                obtainCustomers,
-                customers
+                prepareSearchList
             }}
         >
             {children}

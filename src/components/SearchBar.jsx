@@ -1,12 +1,16 @@
 import { Fragment, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
+import { useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+
+const numbers = ["0","1","2","3","4","5","6","7","8","9"]
 
 export default function SearchBar() {
 
   const [selected, setSelected] = useState({})
   const [query, setQuery] = useState('')
 
+  const navigate = useNavigate()
   const { searchList } = useAuth()
 
   const filteredSearch =
@@ -17,11 +21,19 @@ export default function SearchBar() {
             .toLowerCase()
             .replace(/\s+/g, '')
             .includes(query.toLowerCase().replace(/\s+/g, ''))
+          || item.name && item.name
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .includes(query.toLowerCase().replace(/\s+/g, ''))
+          || item.lastName && item.lastName
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .includes(query.toLowerCase().replace(/\s+/g, ''))
         )
-
+        
   return (
     <div className="m-1 mt-5">
-      <Combobox value={selected} onChange={setSelected}>
+      <Combobox value={selected} onChange={item =>navigate(`/admin-console/${item.searchType}/${item._id}`)}>
         <div className="relative mt-1">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md 
           focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 
@@ -68,7 +80,7 @@ export default function SearchBar() {
                             selected ? 'font-medium' : 'font-normal'
                           }`}
                         >
-                          {item.customId}
+                          {numbers.includes(query.charAt(1)) ? item.customId : <>{item.lastName}, {item.name}</>}
                         </span>
                         {selected ? (
                           <span

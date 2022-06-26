@@ -2,42 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-
-:root {
-    --primary: #354A67;
-    --primary-light: #4b6993;
-    --secondary: #4b5563;
-    --secondary-light: #9ca3af;
-    --remove: #dc2626;
-    --remove-light: #f87171;
+.spinner {
+    margin: 100px auto;
+    width: 80px;
+    height: 60px;
+    text-align: center;
+    font-size: 10px;
   }
-
-.primary-button{
-    background-color: var(--primary);
-    color: white;
-    transition: .1s all ease-in-out;
-}
-
-.primary-button:hover{
-    background-color: var(--primary-light);
-}
-
-.secondary-button{
-    background-color: var(--secondary);
-    color: white;
-    transition: .1s all ease-in-out;
-}
-.secondary-button:hover{
-    background-color: var(--secondary-light);
-}
-
-.remove-button{
-    background-color: var(--remove);
-    color: white;
-    transition: .1s all ease-in-out;
-
-}
-
-.remove-button:hover{
-    background-color: var(--remove-light);
-}
+  
+  .spinner > div {
+    background-color: #FAA356;
+    height: 100%;
+    width: 7px;
+    margin:1px;
+    display: inline-block;
+    
+    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  }
+  
+  .spinner .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+  }
+  
+  .spinner .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+  }
+  
+  .spinner .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+  }
+  
+  .spinner .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+  }
+  
+  @-webkit-keyframes sk-stretchdelay {
+    0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+    20% { -webkit-transform: scaleY(1.0) }
+  }
+  
+  @keyframes sk-stretchdelay {
+    0%, 40%, 100% { 
+      transform: scaleY(0.4);
+      -webkit-transform: scaleY(0.4);
+    }  20% { 
+      transform: scaleY(1.0);
+      -webkit-transform: scaleY(1.0);
+    }
+  }

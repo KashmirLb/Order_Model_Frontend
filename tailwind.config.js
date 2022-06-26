@@ -12,8 +12,13 @@ module.exports = {
         'admin-primary' : '#1e1e1e',
         'admin-primary-h' : '#FF995C',
         'admin-secondary' : '#393B40',
+        'admin-secondary-h' : '#54575C',
         'admin-light' : '#FAA356',
+        'admin-light-h': '#FAB170'
 
+      },
+      maxHeight: {
+        'dashboard':'65vh'
       }
     },
   },
@@ -22,5 +27,8 @@ module.exports = {
       backgroundColor: ['group-hover'],
     }
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+    require('tailwind-scrollbar-hide')
+  ],
 }
