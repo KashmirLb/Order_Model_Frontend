@@ -10,7 +10,8 @@ const Customers = () => {
   const [ sortType, setSortType ] = useState("Last Comment")
   const [ sortOrder, setSortOrder ] = useState("Ascending")
   const [ sortOnlyActive, setSortOnlyActive ] = useState(false)
-  const { obtainCustomers, customers, sortCustomers } = useData()
+  const { obtainCustomers, customers, sortCustomers, openCloseUserDialog } = useData()
+
 
   useEffect(()=>{
     obtainCustomers()
@@ -35,6 +36,7 @@ const Customers = () => {
       <button
         type="button"
         className="p-2 bg-admin-light text-lg shadow-md m-4 rounded-md font-bold hover:bg-admin-light-h transition-colors"
+        onClick={openCloseUserDialog}
       >New Customer</button>
       <div className="m-1 my-3 md:m-4 md:mt-2 bg-admin-primary rounded-lg">
         <div className=" text-admin-light p-4 flex">
@@ -94,7 +96,7 @@ const Customers = () => {
             }
         </div>
       </div>
-      <DialogCreateUser />
+      {openCloseUserDialog && <DialogCreateUser />}
     </>
   )
 }

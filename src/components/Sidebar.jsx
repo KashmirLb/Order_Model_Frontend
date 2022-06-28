@@ -21,7 +21,7 @@ const userLinks =[
 
 const Sidebar = () => {
 
-  const { auth } = useAuth()
+  const { auth, searchList } = useAuth()
 
   return (
     <aside className="md:w-1/4 lg:w-1/5 shadow-lg ">
@@ -37,7 +37,7 @@ const Sidebar = () => {
           ))
         }
       </nav>
-      {auth?.adminId && <SearchBar />}
+      {auth?.adminId && <SearchBar searchList={searchList} sidebar={true}/>}
     </aside>
   )
 }

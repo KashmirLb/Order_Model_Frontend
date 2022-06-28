@@ -1,10 +1,13 @@
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Dialog, Transition, Popover } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import useData from '../hooks/useData'
-
+import Alert from './Alert'
 
 export default function DialogCreateUser() {
 
+  const [ alert, setAlert ] = useState({})
   const [ name, setName ] = useState("")
   const [ lastName, setLastName ] = useState("")
   const [ email, setEmail ] = useState("")
@@ -13,43 +16,92 @@ export default function DialogCreateUser() {
   const [ items, setItems ] = useState([])
   const [ itemName, setItemName ] = useState("")
   const [ itemDescription, setItemDescription ] = useState("")
-  const [ createItemDialog, setCreateItemDialog ] = useState(false)
 
-  const { openCreateUserDialog, setOpenCreateUserDialog } = useData()
+  const navigate = useNavigate()
 
-  const handleDialogClose = () =>{
-    setCreateItemDialog(false)
-    setOpenCreateUserDialog(false)
-  }
+  const { openCreateUserDialog, openCloseUserDialog, createCustomer } = useData()
 
-  // Creating form. Just added the Items section.
-  /*
-    //////////////////////- Check if more sections need to be added, go through user model.
-    //////////////////////- Create states for each field and add it as value + onChange
-    ///////////////////// Another module needs to be created to add Items.
-    - Instead a popup has been created, need to create function to create Item and add it to items array.
-    - Create password generator
-    - Create submithandler that does the necessary checks.
-    - Modify the "Create new user" in backend accordingly. Make sure ALL FIELDS ARE CREATED (admin needs to be obtained from token, then searched by ID etc...),
-    Make sure items is created correctly with the owner customId, item needs to be created with custom ID AFTER user is creatled.
-    - After creating the new user, window should navigate to the user profile (ready to create new order)
-    - Have "New customer" button work.
-  */
+  useEffect(()=>{
+
+    setAlert({})
+    setName("")
+    setLastName("")
+    setEmail("")
+    setPhoneNumber("")
+    setPassword("")
+    setItems([])
+
+  },[openCreateUserDialog])
 
     const handleGeneratePassword = () =>{
-
+      setPassword(Math.random().toString(36).slice(2,10))
     }
 
-    const handleCreateItem = () =>{
+    const handleAddItem = () =>{
 
-      setCreateItemDialog(!createItemDialog)
+      if(itemName===""){
+        return
+      }
 
+      let newItem = {
+        name: itemName,
+        description: itemDescription,
+      }
+
+      setItemName("")
+      setItemDescription("")
+      setItems([...items, newItem])
     }
+
+    const handleSubmit = async e =>{
+      e.preventDefault()
+
+      if([name, lastName, password, email].includes("")){
+
+        setAlert({
+          msg: "Mandatory fields missing",
+          error: true
+        })
+        return
+      }
+      const addingCustomer = await createCustomer({
+        name,
+        lastName,
+        password,
+        email,
+        phoneNumber,
+        items
+      })
+
+      setAlert(addingCustomer.alert)
+
+      setName("")
+      setLastName("")
+      setEmail("")
+      setPhoneNumber("")
+      setPassword("")
+      setItems([])
+
+      setTimeout(()=>{
+        setAlert({})
+        openCloseUserDialog()
+        navigate(`/admin-console/users/${addingCustomer.user._id}`)
+      },1500)
+    }
+
+    const { msg, error } = alert
+
+    const styleBorders = input =>{
+      if(input==="" && error){
+        return "outline-red-700 outline-4 outline"
+      }
+      return ""
+    } 
 
     return (
       <>  
         <Transition appear show={openCreateUserDialog} as={Fragment}>
-          <Dialog as="div" className="relative z-10" onClose={handleDialogClose}>
+          <Dialog as="div" className="relative z-10" onClose={openCloseUserDialog}>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -80,8 +132,11 @@ export default function DialogCreateUser() {
                     >
                       Create new User
                     </Dialog.Title>
-                      <form>
+                      <form
+                        onSubmit={handleSubmit}
+                      >
                         <div className="p-3 bg-admin-secondary mt-3 rounded-md">
+                          {msg && <Alert alert={alert}/>}
                             <div className="m-3 mt-5">
                                 <label 
                                     className=" text-admin-light text-xl font-bold"
@@ -92,7 +147,7 @@ export default function DialogCreateUser() {
                                     id="name"
                                     autoComplete="name"
                                     placeholder="Name"
-                                    className="w-full mt-3 p-2 border rounded-sm bg-gray-50"
+                                    className={`${styleBorders(name)} w-full mt-3 p-2 border rounded-sm bg-gray-50`}
                                     value={name}
                                     onChange={e=>setName(e.target.value)}
                                 />
@@ -100,14 +155,14 @@ export default function DialogCreateUser() {
                             <div className="m-3 mt-5">
                                 <label 
                                     className=" text-admin-light text-xl font-bold"
-                                    htmlFor="username"
+                                    htmlFor="lastName"
                                 >Last Name(s):</label>
                                 <input 
                                     type="text"
                                     id="lastName"
                                     autoComplete="Last name"
                                     placeholder="Last Name(s)"
-                                    className="w-full mt-3 p-2 border rounded-sm bg-gray-50"
+                                    className={`${styleBorders(lastName)} w-full mt-3 p-2 border rounded-sm bg-gray-50`}
                                     value={lastName}
                                     onChange={e=>setLastName(e.target.value)}
                                 />
@@ -115,14 +170,14 @@ export default function DialogCreateUser() {
                             <div className="m-3 mt-5">
                                 <label 
                                     className=" text-admin-light text-xl font-bold"
-                                    htmlFor="username"
+                                    htmlFor="email"
                                 >Email address:</label>
                                 <input 
                                     type="email"
                                     id="email"
                                     autoComplete="email"
                                     placeholder="Email"
-                                    className="w-full mt-3 p-2 border rounded-sm bg-gray-50"
+                                    className={`${styleBorders(email)} w-full mt-3 p-2 border rounded-sm bg-gray-50`}
                                     value={email}
                                     onChange={e=>setEmail(e.target.value)}
                                 />
@@ -130,7 +185,7 @@ export default function DialogCreateUser() {
                             <div className="m-3 mt-5">
                                 <label 
                                     className=" text-admin-light text-xl font-bold"
-                                    htmlFor="username"
+                                    htmlFor="telephone"
                                 >Phone Number:</label>
                                 <input 
                                     type="tel"
@@ -145,14 +200,14 @@ export default function DialogCreateUser() {
                             <div className="m-3 mt-5">
                                 <label 
                                     className=" text-admin-light text-xl font-bold"
-                                    htmlFor="username"
+                                    htmlFor="password"
                                 >Initial Password:</label>
                                 <input 
                                     type="text"
                                     id="password"
                                     autoComplete="password"
                                     placeholder="Initial password"
-                                    className="w-full mt-3 p-2 border rounded-sm bg-gray-50"
+                                    className={`${styleBorders(password)} w-full mt-3 p-2 border rounded-sm bg-gray-50`}
                                     value={password}
                                     onChange={e=>setPassword(e.target.value)}
                                 />
@@ -167,7 +222,7 @@ export default function DialogCreateUser() {
                             <div className="m-3 mt-5">
                                 <label 
                                     className=" text-admin-light text-xl font-bold"
-                                    htmlFor="username"
+                                    htmlFor="items"
                                 >Items:</label>
                                 <div className="text-almost-white p-2">
                                     { items.length ? items.map(item => item.name +", ") : null }
@@ -180,9 +235,10 @@ export default function DialogCreateUser() {
                                       </svg>
                                     
                                   </Popover.Button>
-
-                                  <Popover.Panel className="absolute z-10 translate-x-10 -translate-y-80  rounded-sm">
-                                    <div className="m-2 bg-admin-secondary p-2 rounded-sm border-4 border-user-secondary">
+                                  <Popover.Panel className="absolute z-10 translate-x-10 -translate-y-72  rounded-sm">
+                                    <div 
+                                      className="m-2 bg-admin-secondary p-2 rounded-sm border-4 border-user-secondary"
+                                    >
                                       <label 
                                        className=" text-admin-light text-xl font-bold"
                                         htmlFor="itemName"
@@ -198,10 +254,11 @@ export default function DialogCreateUser() {
                                       />
                                       <label 
                                           className=" text-admin-light text-xl font-bold"
-                                          htmlFor="username"
+                                          htmlFor="itemDescription"
                                       >Description</label>
                                       <textarea 
                                         className="block w-full mt-3 p-2 border rounded-sm bg-gray-50"
+                                        id="itemDescription"
                                         value={itemDescription}
                                         onChange={e=>setItemDescription(e.target.value)}
                                       />
@@ -209,34 +266,33 @@ export default function DialogCreateUser() {
                                         <Popover.Button
                                             type="button"
                                             className="rounded-md px-8 bg-admin-primary py-2 text-sm font-medium text-almost-white hover:bg-user-primary transition-colors"
-                                            onClick={close()}
                                         >
                                             Cancel
                                         </Popover.Button>
-                                        <button
+                                        <Popover.Button
                                             type="button"
-                                            className="rounded-md px-8 bg-admin-light py-2 text-sm text-almost-black font-bold hover:bg-user-primary transition-colors"
+                                            className={`${itemName==="" ? "bg-admin-primary" : "bg-admin-light hover:bg-admin-light-h" } rounded-md px-8 py-2 text-sm text-almost-black font-bold  transition-colors`}
+                                            disabled={itemName==="" ? true : false}
+                                            onClick={handleAddItem}
                                         >
                                             Add
-                                        </button>
+                                        </Popover.Button>
                                       </div>
                                     </div>
                                   </Popover.Panel>
                                 </Popover>
-                               
                             </div>
-                            
                         </div>
                         <div className="mt-4 flex justify-around">
                             <button
                                 type="button"
                                 className="rounded-md px-8 bg-admin-secondary py-2 text-sm font-medium text-almost-white hover:bg-user-primary transition-colors"
-                                onClick={handleDialogClose}
+                                onClick={openCloseUserDialog}
                             >
                                 Cancel
                             </button>
                             <button
-                                type="button"
+                                type="submit"
                                 className="rounded-md px-8 bg-indigo-700 py-2 text-sm text-almost-white font-bold hover:bg-user-primary transition-colors"
                             >
                                 Create

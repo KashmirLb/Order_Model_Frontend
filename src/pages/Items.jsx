@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import DialogCreateItem from "../components/DialogCreateItem"
 import ItemPreview from "../components/ItemPreview"
 import Spinner from "../components/Spinner"
 import useData from "../hooks/useData"
@@ -9,7 +10,7 @@ const Items = () => {
   const [ sortOrder, setSortOrder ] = useState("Ascending")
   const [ sortOnlyActive, setSortOnlyActive ] = useState(false)
 
-  const { obtainItems, items, sortItems } = useData()
+  const { obtainItems, items, sortItems, openCloseItemDialog } = useData()
 
   useEffect(()=>{
     obtainItems()
@@ -37,6 +38,7 @@ const Items = () => {
       <button
         type="button"
         className="p-2 bg-admin-light text-lg shadow-md m-4 rounded-md font-bold hover:bg-admin-light-h transition-colors"
+        onClick={openCloseItemDialog}
       >New Item</button>
       <div className="m-1 my-3 md:m-4 md:mt-2 bg-admin-primary rounded-lg">
       <div className=" text-admin-light p-4 flex">
@@ -97,6 +99,7 @@ const Items = () => {
             }
         </div>
       </div>
+      <DialogCreateItem />
     </>
   )
 }

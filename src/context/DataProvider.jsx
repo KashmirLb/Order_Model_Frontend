@@ -1,4 +1,4 @@
-import { createContext, useState, useRef } from "react";
+import { createContext, useState } from "react";
 import axiosClient from "../../config/axiosClient";
 import { sortByLastCreated, sortByLastCreatedOrder } from "../helpers";
 
@@ -12,9 +12,20 @@ const DataProvider = ({children}) =>{
     const [ commentList, setCommentList ] = useState([])
     const [ orders, setOrders ] = useState([])
     const [ items, setItems ] = useState([])
+    const [ itemData, setItemData ] = useState({})
     const [ openDateDialog, setOpenDateDialog ] = useState(false)
-    const [ openCreateUserDialog, setOpenCreateUserDialog ] = useState(true)
+    const [ openCreateUserDialog, setOpenCreateUserDialog ] = useState(false)
+    const [ openCreateItemDialog, setOpenCreateItemDialog ] = useState(false)
+    const [ foundItem, setFoundItem ] = useState({})
 
+
+    const openCloseUserDialog = () =>{
+        setOpenCreateUserDialog(!openCreateUserDialog)
+    }
+
+    const openCloseItemDialog = () =>{
+        setOpenCreateItemDialog(!openCreateItemDialog)
+    }
 
     const sortingUsersByComments = (data, sortOrder) => {
 
@@ -125,6 +136,31 @@ const DataProvider = ({children}) =>{
 
     }
 
+    const createCustomer = async customer =>{
+
+        try {
+            const adminToken = sessionStorage.getItem('admintoken')
+            const { data } = await axiosClient.post("/admin/create-user", customer, config(adminToken))
+
+            return {
+                alert: {
+                    msg: "Customer created",
+                    error: false
+                },
+                user: {
+                    _id: data.user
+                }
+            }     
+        } catch (error) {
+            return {
+                alert: {
+                    msg: error.response.data.msg,
+                    error: true
+                }
+            }
+        }
+    }
+
     const obtainCustomerData = async id =>{
         try {
                 setDataLoading(true)
@@ -202,6 +238,12 @@ const DataProvider = ({children}) =>{
             setDataLoading(true)
             
             const adminToken = sessionStorage.getItem('admintoken')
+
+            if(!adminToken){
+                setDataLoading(false)
+                   return
+            }
+
             const { data } = await axiosClient.post('/order/obtain-orders', {frame},  config(adminToken))
 
             setOrders(data)         
@@ -230,6 +272,10 @@ const DataProvider = ({children}) =>{
         try {
 
             const adminToken = sessionStorage.getItem('admintoken')
+
+            if(!adminToken){
+                return
+            }
             const { data } = await axiosClient("/item/obtain-items", config(adminToken) )
 
             // Filter assets, the ones with active order come first, then sorted by created date.
@@ -273,12 +319,61 @@ const DataProvider = ({children}) =>{
         }
     }
 
+    const obtainItemData = async id =>{
+        try {
+            setDataLoading(true)
+            const adminToken = sessionStorage.getItem('admintoken')
+            
+            if(!adminToken){
+                setDataLoading(false)
+                   return
+            }
+            
+            const { data } = await axiosClient(`/item/item-data/${id}`, config(adminToken))
+
+            
+           setItemData(data)
+
+
+        } catch (error) {
+            console.log(error.response.data.msg)
+        }
+        setDataLoading(false)
+    }
+
+    const createItem = async item =>{
+
+        try {
+            const adminToken = sessionStorage.getItem('admintoken')
+            const { data } = await axiosClient.post("/admin/create-item", item, config(adminToken))
+
+            console.log(data)
+            return {
+                alert: {
+                    msg: "Item created",
+                    error: false
+                },
+                item: {
+                    _id: data.item
+                }
+            }     
+        } catch (error) {
+            return {
+                alert: {
+                    msg: error.response.data.msg,
+                    error: true
+                }
+            }
+        }
+    }
+
     return(
         <DataContext.Provider
             value={{
                 customers,
                 obtainCustomers,
                 sortCustomers,
+                createCustomer,
                 customerData,
                 obtainCustomerData,
                 dataLoading,
@@ -286,6 +381,7 @@ const DataProvider = ({children}) =>{
                 setOpenDateDialog,
                 openCreateUserDialog,
                 setOpenCreateUserDialog,
+                openCloseUserDialog,
                 obtainComments,
                 commentList,
                 commentIsRead,
@@ -295,7 +391,15 @@ const DataProvider = ({children}) =>{
                 sortOrders,
                 obtainItems,
                 items,
-                sortItems
+                sortItems,
+                openCreateItemDialog,
+                openCloseItemDialog,
+                foundItem,
+                setFoundItem,
+                createItem,
+                obtainItemData,
+                itemData
+
             }}
         >
             {children}

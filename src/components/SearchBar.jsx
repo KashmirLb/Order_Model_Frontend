@@ -1,17 +1,18 @@
 import { Fragment, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom'
-import useAuth from '../hooks/useAuth'
+import useData from '../hooks/useData'
 
 const numbers = ["0","1","2","3","4","5","6","7","8","9"]
 
-export default function SearchBar() {
+export default function SearchBar({searchList, sidebar}) {
 
   const [selected, setSelected] = useState({})
   const [query, setQuery] = useState('')
 
+  const { setFoundItem } = useData()
+
   const navigate = useNavigate()
-  const { searchList } = useAuth()
 
   const filteredSearch =
     query === ''
@@ -33,7 +34,7 @@ export default function SearchBar() {
         
   return (
     <div className="m-1 mt-5">
-      <Combobox value={selected} onChange={item =>navigate(`/admin-console/${item.searchType}/${item._id}`)}>
+      <Combobox value={selected} onChange={item => sidebar ? navigate(`/admin-console/${item.searchType}/${item._id}`) : setFoundItem(item)}>
         <div className="relative mt-1">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md 
           focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 

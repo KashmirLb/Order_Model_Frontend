@@ -12,7 +12,7 @@ const Customer = () => {
 
     const { dataLoading, obtainCustomerData, customerData } = useData()
 
-    const { name, lastName, email, customId, comments, assets, orders, activeOrders } = customerData
+    const { name, lastName, email, customId, phoneNumber, comments, assets, orders, activeOrders } = customerData
 
     
 
@@ -55,6 +55,11 @@ const Customer = () => {
                             </tr>
                             <tr className="h-2"></tr>
                             <tr className="bg-admin-primary">
+                                <td className="p-2">Telephone:</td>
+                                <td className="text-almost-white break-all">{phoneNumber && phoneNumber}</td>
+                            </tr>
+                            <tr className="h-2"></tr>
+                            <tr className="bg-admin-primary">
                                 <td className="p-2">Assets:</td>
                                 <td className="text-almost-white">
                                     <ul>
@@ -75,7 +80,7 @@ const Customer = () => {
                                         else return null
                                     })
                                     :
-                                    <li className="list-none">No items available</li>}
+                                    <li className="list-none">No orders available</li>}
                                 </td>
                             </tr>
                         </tbody>

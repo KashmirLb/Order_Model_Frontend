@@ -11,6 +11,7 @@ import Customers from './pages/Customers'
 import Customer from './pages/Customer'
 import Orders from './pages/Orders'
 import Items from './pages/Items'
+import Item from './pages/Item'
 import Settings from './pages/Settings'
 import { DataProvider } from './context/DataProvider'
 
@@ -31,6 +32,7 @@ function App() {
               <Route path="users/:id" element={<Customer/>}/>
               <Route path="orders" element={<Orders/>}/>
               <Route path="items" element={<Items/>}/>
+              <Route path="items/:id" element={<Item/>}/>
               <Route path="settings" element={<Settings/>}/>
             </Route>
             <Route path="/user" element={<UserLayout/>}>
