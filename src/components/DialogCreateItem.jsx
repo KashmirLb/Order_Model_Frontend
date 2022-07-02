@@ -16,7 +16,7 @@ export default function DialogCreateItem() {
 
     const navigate = useNavigate()
 
-    const { openCreateItemDialog, openCloseItemDialog, foundItem, setFoundItem, createItem } = useData()
+    const { openCreateItemDialog, openCloseItemDialog, customerData, setCustomerData, createItem } = useData()
     const { searchList } = useAuth()
 
     useEffect(()=>{
@@ -31,7 +31,7 @@ export default function DialogCreateItem() {
         setAlert({})
         setItemName("")
         setItemDescription("")
-        setFoundItem({})
+        setCustomerData({})
 
     },[openCreateItemDialog])
 
@@ -45,7 +45,7 @@ export default function DialogCreateItem() {
             })
             return
         }   
-        if(!foundItem._id){
+        if(!customerData._id){
             setAlert({
                 msg: "You need to select the owner",
                 error: true
@@ -55,7 +55,7 @@ export default function DialogCreateItem() {
         const addedItem = await createItem({
             name: itemName,
             description: itemDescription,
-            owner: foundItem._id
+            owner: customerData._id
         })  
         setAlert(addedItem.alert)
 
@@ -148,8 +148,8 @@ export default function DialogCreateItem() {
                                 >Owner</label>
                                 <SearchBar searchList={userList} sidebar={false} />
                                 <div className="text-almost-white bg-admin-primary p-3 m-1 rounded-md border border-admin-light">
-                                    <p><span className="text-admin-light">Id:</span> {foundItem.customId && foundItem.customId}</p>
-                                    <p><span className="text-admin-light">Name:</span> {foundItem.name && ` ${foundItem.lastName}, ${foundItem.name}`}</p>
+                                    <p><span className="text-admin-light">Id:</span> {customerData.customId && customerData.customId}</p>
+                                    <p><span className="text-admin-light">Name:</span> {customerData.name && ` ${customerData.lastName}, ${customerData.name}`}</p>
 
                                 </div>
                             </div>

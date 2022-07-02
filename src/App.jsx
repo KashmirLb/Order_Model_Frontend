@@ -14,6 +14,8 @@ import Items from './pages/Items'
 import Item from './pages/Item'
 import Settings from './pages/Settings'
 import { DataProvider } from './context/DataProvider'
+import CreateOrder from './pages/CreateOrder'
+import Order from './pages/Order'
 
 function App() {
  
@@ -31,6 +33,8 @@ function App() {
               <Route path="users" element={<Customers/>}/>
               <Route path="users/:id" element={<Customer/>}/>
               <Route path="orders" element={<Orders/>}/>
+              <Route path="orders/create" element={<CreateOrder/>}/>
+              <Route path="orders/:id" element={<Order/>}/>
               <Route path="items" element={<Items/>}/>
               <Route path="items/:id" element={<Item/>}/>
               <Route path="settings" element={<Settings/>}/>

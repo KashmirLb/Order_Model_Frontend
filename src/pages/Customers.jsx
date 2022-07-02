@@ -96,7 +96,7 @@ const Customers = () => {
             }
         </div>
       </div>
-      {openCloseUserDialog && <DialogCreateUser />}
+      <DialogCreateUser creatingOrder={false}/>
     </>
   )
 }

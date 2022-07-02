@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { Dialog, Transition, Popover } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import useData from '../hooks/useData'
+import useAuth from '../hooks/useAuth'
 import Alert from './Alert'
 
-export default function DialogCreateUser() {
+export default function DialogCreateUser({creatingOrder}) {
 
   const [ alert, setAlert ] = useState({})
   const [ name, setName ] = useState("")
@@ -19,7 +20,8 @@ export default function DialogCreateUser() {
 
   const navigate = useNavigate()
 
-  const { openCreateUserDialog, openCloseUserDialog, createCustomer } = useData()
+  const { openCreateUserDialog, openCloseUserDialog, createCustomer, obtainCustomerData } = useData()
+  const { prepareSearchList } = useAuth()
 
   useEffect(()=>{
 
@@ -82,11 +84,22 @@ export default function DialogCreateUser() {
       setPassword("")
       setItems([])
 
-      setTimeout(()=>{
-        setAlert({})
-        openCloseUserDialog()
-        navigate(`/admin-console/users/${addingCustomer.user._id}`)
-      },1500)
+      if(creatingOrder){
+        await prepareSearchList()
+        await obtainCustomerData(addingCustomer.user._id)
+        setTimeout(()=>{
+          setAlert({})
+          
+          openCloseUserDialog()
+        },1500)
+      }
+      else{
+        setTimeout(()=>{
+          setAlert({})
+          openCloseUserDialog()
+          navigate(`/admin-console/users/${addingCustomer.user._id}`)
+        },1500)
+      }
     }
 
     const { msg, error } = alert

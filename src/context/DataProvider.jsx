@@ -11,12 +11,12 @@ const DataProvider = ({children}) =>{
     const [ customerData, setCustomerData ] = useState({})
     const [ commentList, setCommentList ] = useState([])
     const [ orders, setOrders ] = useState([])
+    const [ orderData, setOrderData ] = useState({})
     const [ items, setItems ] = useState([])
     const [ itemData, setItemData ] = useState({})
     const [ openDateDialog, setOpenDateDialog ] = useState(false)
     const [ openCreateUserDialog, setOpenCreateUserDialog ] = useState(false)
     const [ openCreateItemDialog, setOpenCreateItemDialog ] = useState(false)
-    const [ foundItem, setFoundItem ] = useState({})
 
 
     const openCloseUserDialog = () =>{
@@ -173,8 +173,6 @@ const DataProvider = ({children}) =>{
                 const { data } = await axiosClient(`/admin/user-data/${id}`, config(adminToken))
 
                 const activeOrders = data.orders.filter(order => order.status !== "Closed" )
-                const sortedComments = sortByLastCreated(data.comments)
-                data.comments = sortedComments
                 const activeAdded = {...data, activeOrders}
                
                 setCustomerData(activeAdded)
@@ -184,6 +182,29 @@ const DataProvider = ({children}) =>{
                 console.log(error.response.data.msg)
             }
             setDataLoading(false)
+    }
+
+    const updateCustomer = async customer =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            const { data } = await axiosClient.put("user/update-user", customer, config(adminToken))
+
+            return {
+                msg: data.msg,
+                error: false
+            }
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }    
+    
     }
 
     const obtainComments = async frame => {
@@ -232,6 +253,23 @@ const DataProvider = ({children}) =>{
         }        
     }
 
+    const createComment = async comment =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+
+        if(!adminToken){
+            return
+        }
+
+     try {
+        await axiosClient.post("comment/admin-creates", comment, config(adminToken))
+
+
+
+     } catch (error) {
+         console.log(error.response.data.msg)
+     }        
+    }
+
     const obtainOrders = async frame =>{
 
         try {
@@ -265,6 +303,67 @@ const DataProvider = ({children}) =>{
         else if(sort==="Last created"){
             setOrders(sortByLastCreated(orders))
         }
+    }
+
+    const createOrder = async newOrder =>{
+
+        try {
+            const adminToken = sessionStorage.getItem('admintoken')
+            const { data } = await axiosClient.post("/order/create-order", newOrder, config(adminToken))
+
+            return {
+                alert: {
+                    msg: data.msg,
+                    error: false
+                },
+                order: {
+                    _id: data.order
+                }
+            }     
+        } catch (error) {
+            return {
+                alert: {
+                    msg: error.response.data.msg,
+                    error: true
+                }
+            }
+        } 
+    }
+
+    const obtainOrderData = async id =>{
+        try {
+            setDataLoading(true)
+            const adminToken = sessionStorage.getItem('admintoken')
+            
+            if(!adminToken){
+                return
+            }
+            
+            const { data } = await axiosClient(`/order/obtain-order-data/${id}`, config(adminToken))
+
+        
+           
+            setOrderData(data)
+
+
+        } catch (error) {
+            console.log(error.response.data.msg)
+        }
+        setDataLoading(false)
+    }
+
+    const updateOrder = async order =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            await axiosClient.put("order/update-order", order, config(adminToken))
+        } catch (error) {
+            console.log(error.response.data.msg)
+        }    
     }
 
     const obtainItems = async () =>{
@@ -375,7 +474,9 @@ const DataProvider = ({children}) =>{
                 sortCustomers,
                 createCustomer,
                 customerData,
+                setCustomerData,
                 obtainCustomerData,
+                updateCustomer,
                 dataLoading,
                 openDateDialog,
                 setOpenDateDialog,
@@ -385,21 +486,24 @@ const DataProvider = ({children}) =>{
                 obtainComments,
                 commentList,
                 commentIsRead,
+                createComment,
                 setCommentList,
                 obtainOrders,
                 orders,
                 sortOrders,
+                obtainOrderData,
+                orderData,
+                setOrderData,
+                createOrder,
+                updateOrder,
                 obtainItems,
                 items,
                 sortItems,
                 openCreateItemDialog,
                 openCloseItemDialog,
-                foundItem,
-                setFoundItem,
                 createItem,
                 obtainItemData,
                 itemData
-
             }}
         >
             {children}

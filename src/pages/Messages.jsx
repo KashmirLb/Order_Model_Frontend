@@ -1,8 +1,9 @@
-import useData from "../hooks/useData"
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import useData from "../hooks/useData"
 import DialogTimeFrame from "../components/DialogTimeFrame"
-import { formatDate } from "../helpers"
 import Spinner from "../components/Spinner"
+import { formatDate } from "../helpers"
 
 const Messages = () => {
 
@@ -11,6 +12,8 @@ const Messages = () => {
   const [ searchClient, setSearchClient ] = useState("")
   const [ readSelected, setReadSelected ] = useState(true)
   const [ loadingMessages, setLoadingMessages ] = useState(true)
+
+  const navigate = useNavigate()
 
   const { setOpenDateDialog, obtainComments, commentList, dataLoading, commentIsRead } = useData()
 
@@ -56,6 +59,13 @@ const Messages = () => {
 
   const handleRead = () => {
     setReadSelected(!readSelected)
+  }
+
+  const handleMessageClick = (e, id)=>{
+      if(e.target.tagName==="button" || e.target.tagName==="svg" || e.target.tagName==="path"){
+        return
+      }
+      navigate(`/admin-console/orders/${id}`)
   }
 
   return (
@@ -118,16 +128,20 @@ const Messages = () => {
           
             filteredList?.length ? filteredList.map( comment =>(
 
-              <div key={comment._id} className={`${comment.adminRead ? "bg-admin-secondary hover:bg-admin-secondary-h" : "bg-user-primary hover:bg-user-secondary"} group hover:cursor-pointer rounded-md px-3 py-2 my-2 md:flex`}>
+              <div 
+                key={comment._id} 
+                className={`${comment.adminRead ? "bg-admin-secondary hover:bg-admin-secondary-h" : "bg-user-primary hover:bg-user-secondary"}
+                  group hover:cursor-pointer rounded-md px-3 py-2 my-2 md:flex`}
+                onClick={(e)=>handleMessageClick(e, comment.order._id)}
+              >
                 <div className="inline-block md:w-2/5 mr-4 py-2">
                   <p className="rounded-md group-hover:bg-admin-primary group-hover:px-2 group-hover:-mx-2 w-fit">{comment.order.customId}</p>
                   <p>{comment.user.name}, {comment.user.lastName}</p>
                   <div className="flex flex-wrap gap-2">
                     <p className="mt-3">{formatDate(comment.createdAt)}</p>
                     {comment.adminRead ? "" : (
-
-                      <button className="bg-user-secondary hover:bg-admin-light hover:cursorp-1 m-1 text-almost-white rounded-md" type="button" onClick={()=>commentIsRead(comment._id)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <button className="bg-user-secondary hover:bg-admin-light hover:cursorp-1 m-1 text-almost-white rounded-md z-10" type="button" onClick={()=>commentIsRead(comment._id)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" id="adminRead"  className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
                         </svg>
                       </button>

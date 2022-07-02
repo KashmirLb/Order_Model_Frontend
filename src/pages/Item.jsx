@@ -112,6 +112,7 @@ const Item = () => {
                                     <button
                                         type="button"
                                         className="bg-admin-primary p-2 mt-2 rounded-md hover:text-admin-light transition-colors"
+                                        onClick={()=>navigate(`/admin-console/orders/${order._id}`)}
                                     >See order</button>
                                     <p className="text-admin-light "> Last update:<span className="text-almost-white ml-5">{formatDate(order.updatedAt)}</span></p>
                                 </div>

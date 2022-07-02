@@ -21,7 +21,7 @@ const userLinks =[
 
 const Sidebar = () => {
 
-  const { auth, searchList } = useAuth()
+    const { auth, searchList } = useAuth()
 
   return (
     <aside className="md:w-1/4 lg:w-1/5 shadow-lg ">

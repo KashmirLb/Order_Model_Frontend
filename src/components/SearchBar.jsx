@@ -10,7 +10,7 @@ export default function SearchBar({searchList, sidebar}) {
   const [selected, setSelected] = useState({})
   const [query, setQuery] = useState('')
 
-  const { setFoundItem } = useData()
+  const { setCustomerData } = useData()
 
   const navigate = useNavigate()
 
@@ -34,7 +34,7 @@ export default function SearchBar({searchList, sidebar}) {
         
   return (
     <div className="m-1 mt-5">
-      <Combobox value={selected} onChange={item => sidebar ? navigate(`/admin-console/${item.searchType}/${item._id}`) : setFoundItem(item)}>
+      <Combobox value={selected} onChange={item => sidebar ? navigate(`/admin-console/${item.searchType}/${item._id}`) : setCustomerData(item)}>
         <div className="relative mt-1">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md 
           focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 

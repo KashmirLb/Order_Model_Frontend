@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import DialogTimeFrame from "../components/DialogTimeFrame"
 import { formatDate } from "../helpers"
 import Spinner from "../components/Spinner"
+import { useNavigate } from "react-router-dom"
 
 const Orders = () => {
 
@@ -12,6 +13,8 @@ const Orders = () => {
   const [ orderStatus, setOrderStatus ] = useState("All Active")
   const [ selectSort, setSelectSort ] = useState("Last created")
   const [ loadingOrders, setLoadingOrders ] = useState(true)
+
+  const navigate = useNavigate()
 
   const { setOpenDateDialog, obtainOrders, orders, dataLoading, sortOrders } = useData()
 
@@ -67,6 +70,11 @@ const Orders = () => {
 
   return (
     <>
+    <button
+        type="button"
+        className="p-2 px-4 bg-admin-light text-lg shadow-md m-4 mb-0 rounded-md font-bold hover:bg-admin-light-h transition-colors"
+        onClick={()=>navigate("create")}
+      >New Order</button>
       <div className="p-3">
         <div className="bg-admin-primary rounded-md p-3 text-admin-light md:flex md:flex-wrap">
           <div className="mt-3 md:my-2">
@@ -148,11 +156,12 @@ const Orders = () => {
               <div key={order._id} 
                 className={`${!order.comments[0]?.adminRead && order.comments[0] ? "bg-user-primary hover:bg-user-secondary" : 
                 "bg-admin-secondary hover:bg-admin-secondary-h"} group hover:cursor-pointer rounded-md px-3 py-2 my-2 md:flex`}
+                onClick={()=>navigate(order._id)}
               >
                 <div className="inline-block md:w-2/5 mr-4 py-2">
                   <p className="rounded-md group-hover:bg-admin-primary group-hover:px-2 group-hover:-mx-2 w-fit">{order.customId}</p>
                   <p>{order.customer.lastName}, {order.customer.name}</p>
-                  <p>{order.asset?.name}</p>
+                  <p>{order.asset && order.asset?.name}</p>
                   <div className="flex flex-wrap gap-2">
                     <p className="mt-3">{!order.comments[0]?.adminRead ? order.comments[0] ? "New Message!" : "No messages" : `Last update: ${formatDate(order.comments[0]?.createdAt)}`}</p>
                   </div>
