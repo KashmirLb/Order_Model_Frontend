@@ -3,25 +3,26 @@ import { useParams, useNavigate } from "react-router-dom"
 import useData from "../hooks/useData"
 import Spinner from "../components/Spinner"
 import { formatDate } from "../helpers"
+import Alert from "../components/Alert"
 
 // Single item page just finished!!!!!
 
 /*
-    Created link to owner.
-     ? Maybe create link from owner to items ???
-
-     Next up: Create new order.
-     > Single order page.
-     > Create comments in order.
-
+    Enable edit button 
+    Enable delete button (item will be set to deleted, but not removed)
 */
 const Item = () => {
 
+    const [ alert, setAlert ] = useState({})
     const [ itemLoading, setItemLoading ] = useState(true)
+    const [ editItem, setEditItem ] = useState(false)
+    const [ editName, setEditName ] = useState("")
+    const [ editDescription, setEditDescription ] = useState("")
+
     const params = useParams()
     const navigate = useNavigate()
 
-    const { dataLoading, obtainItemData, itemData } = useData()
+    const { dataLoading, obtainItemData, itemData, updateItem, setItemData } = useData()
 
     const { name, customId, description, owner, orders, createdAt } = itemData
 
@@ -38,6 +39,42 @@ const Item = () => {
         navigate(`/admin-console/users/${owner._id}`)
     }
 
+    const handleEditItem = () =>{
+        setEditName(name)
+        setEditDescription(description)
+        setEditItem(true)
+    }
+
+    const handleUpdateItem = async () =>{
+        if(editName===""){
+            setAlert({
+                msg: "Item name empty",
+                error: true
+            })
+            setTimeout(()=>{
+                setAlert({})
+            },2000)
+            return
+        }
+
+        const updatingItem = await updateItem({_id: itemData._id, name: editName, description: editDescription})
+
+        setAlert(updatingItem)
+
+        const updatedItem = {...itemData}
+        updatedItem.name = editName
+        updatedItem.description = editDescription
+
+        setItemData(updatedItem)
+        setEditItem(false)
+
+        setTimeout(()=>{
+            setAlert({})
+        },1500)
+    }
+
+    const { msg } = alert
+
   return (
 
     dataLoading || itemLoading ? <Spinner/> :
@@ -53,7 +90,18 @@ const Item = () => {
                             <tr className="h-2"></tr>
                             <tr className="bg-admin-primary">
                                 <td className="p-2">Item name:</td>
-                                <td className="text-almost-white">{name}</td>
+                                <td className="text-almost-white">
+                                    {
+                                         editItem ? (
+                                            <input
+                                                type="text"
+                                                className="text-almost-black px-2 rounded-md"
+                                                value={editName}
+                                                onChange={e=>setEditName(e.target.value)}
+                                            />
+                                        ) : name
+                                    }
+                                </td>
                             </tr>
                             <tr className="h-2"></tr>
                             <tr className="h-2"></tr>
@@ -64,7 +112,17 @@ const Item = () => {
                             <tr className="h-2"></tr>
                             <tr className="bg-admin-primary">
                                 <td className="p-2">Description:</td>
-                                <td className="text-almost-white">{description && description}</td>
+                                <td className="text-almost-white">
+                                    {
+                                        editItem ? (
+                                            <textarea 
+                                            className="text-almost-black p-2 my-2 rounded-sm bg-gray-50 h-20"
+                                            value={editDescription}
+                                            onChange={e=>setEditDescription(e.target.value)}
+                                          />
+                                       ) : description && description
+                                   }
+                                </td>
                             </tr>
                             <tr className="h-2"></tr>
                             
@@ -76,17 +134,43 @@ const Item = () => {
                         </tbody>
                 </table>
                 </div>
-                <div className="flex gap-3 px-3">
-                    <button
-                        type="button"
-                        className="my-3 p-2 bg-user-secondary text-almost-white font-bold uppercase rounded-md w-1/3"
-                    >Edit</button>
-                    <button
-                        type="button"
-                        className="my-3 p-2 bg-red-700 text-almost-white font-bold uppercase rounded-md w-1/3"
-                    >
-                        Delete
-                    </button>
+                
+                    {
+                        editItem ? (
+                            <div className="flex gap-3 px-3">
+                                 <button
+                                    type="button"
+                                    className="my-3 p-2 bg-user-primary-h hover:bg-user-secondary text-almost-white font-bold uppercase rounded-md w-1/3 transition-colors"
+                                    onClick={()=>setEditItem(false)}
+                                >Cancel</button>
+                                <button
+                                    type="button"
+                                    className="my-3 p-2 bg-indigo-700 hover:bg-indigo-500 text-almost-white font-bold uppercase rounded-md w-1/3 transition-colors"
+                                    onClick={handleUpdateItem}
+                                >
+                                    Update
+                                </button>
+                            </div>
+                        )
+                        :
+                        (
+                            <div className="flex gap-3 px-3">
+                                <button
+                                    type="button"
+                                    className="my-3 p-2 bg-user-primary-h hover:bg-user-secondary text-almost-white font-bold uppercase rounded-md w-1/3 transition-colors"
+                                    onClick={handleEditItem}
+                                >Edit</button>
+                                <button
+                                    type="button"
+                                    className="my-3 p-2 bg-red-700 hover:bg-red-600 text-almost-white font-bold uppercase rounded-md w-1/3 transition-colors"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        )
+                    }
+                <div className="px-10 mb-3">
+                    {msg && <Alert alert={alert}/>}
                 </div>
             </div>
             <div className="bg-admin-primary md:mt-0 md:w-1/2 rounded-md mt-3 p-4 flex flex-col gap-2">

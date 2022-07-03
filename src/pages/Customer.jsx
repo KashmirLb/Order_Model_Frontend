@@ -80,6 +80,18 @@ const Customer = () => {
     const handlePasswordReset = async (e, user)=>{
         e.preventDefault()
 
+        if(user.password===""){
+            openClosePasswordResetDialog()
+            setAlert({
+                msg: "Password can't be empty",
+                error: true
+            })
+            setTimeout(()=>{
+                setAlert({})
+            },1500)
+            return
+        }
+
         const reset = await passwordReset(user)
         openClosePasswordResetDialog()
 

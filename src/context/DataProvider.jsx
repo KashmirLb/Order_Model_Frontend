@@ -204,12 +204,10 @@ const DataProvider = ({children}) =>{
         try {
             const { data } = await axiosClient.put("user/update-user", customer, config(adminToken))
 
-            console.log(data)
-
-            // return {
-            //     msg: data.msg,
-            //     error: false
-            // }
+            return {
+                msg: data.msg,
+                error: false
+            }
         } catch (error) {
             return {
                 msg: error.response.data.msg,
@@ -523,6 +521,28 @@ const DataProvider = ({children}) =>{
         }
     }
 
+    const updateItem = async item =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            const { data } = await axiosClient.put("item/update-item", item, config(adminToken))
+
+            return {
+                msg: data.msg,
+                error: false
+            }
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }    
+    }
+
     return(
         <DataContext.Provider
             value={{
@@ -566,7 +586,9 @@ const DataProvider = ({children}) =>{
                 openCloseItemDialog,
                 createItem,
                 obtainItemData,
-                itemData
+                itemData,
+                setItemData,
+                updateItem
             }}
         >
             {children}
