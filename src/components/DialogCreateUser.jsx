@@ -5,6 +5,7 @@ import { Fragment, useState } from 'react'
 import useData from '../hooks/useData'
 import useAuth from '../hooks/useAuth'
 import Alert from './Alert'
+import { generatePassword } from '../helpers'
 
 export default function DialogCreateUser({creatingOrder}) {
 
@@ -36,7 +37,7 @@ export default function DialogCreateUser({creatingOrder}) {
   },[openCreateUserDialog])
 
     const handleGeneratePassword = () =>{
-      setPassword(Math.random().toString(36).slice(2,10))
+      setPassword(generatePassword())
     }
 
     const handleAddItem = () =>{

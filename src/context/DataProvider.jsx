@@ -17,6 +17,7 @@ const DataProvider = ({children}) =>{
     const [ openDateDialog, setOpenDateDialog ] = useState(false)
     const [ openCreateUserDialog, setOpenCreateUserDialog ] = useState(false)
     const [ openCreateItemDialog, setOpenCreateItemDialog ] = useState(false)
+    const [ openPasswordResetDialog, setOpenPasswordResetDialog ] = useState(false)
 
 
     const openCloseUserDialog = () =>{
@@ -25,6 +26,10 @@ const DataProvider = ({children}) =>{
 
     const openCloseItemDialog = () =>{
         setOpenCreateItemDialog(!openCreateItemDialog)
+    }
+
+    const openClosePasswordResetDialog = () =>{
+        setOpenPasswordResetDialog(!openPasswordResetDialog)
     }
 
     const sortingUsersByComments = (data, sortOrder) => {
@@ -205,6 +210,28 @@ const DataProvider = ({children}) =>{
             }
         }    
     
+    }
+
+    const passwordReset = async user =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            const { data } = await axiosClient.put("user/reset-password", user, config(adminToken))
+
+            return {
+                msg: data.msg,
+                error: false
+            }
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }    
     }
 
     const obtainComments = async frame => {
@@ -477,6 +504,9 @@ const DataProvider = ({children}) =>{
                 setCustomerData,
                 obtainCustomerData,
                 updateCustomer,
+                passwordReset,
+                openClosePasswordResetDialog,
+                openPasswordResetDialog,
                 dataLoading,
                 openDateDialog,
                 setOpenDateDialog,

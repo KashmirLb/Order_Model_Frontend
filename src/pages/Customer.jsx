@@ -4,6 +4,7 @@ import useData from "../hooks/useData"
 import Spinner from "../components/Spinner"
 import { formatDate } from "../helpers"
 import Alert from "../components/Alert"
+import DialogPasswordReset from "../components/DialogPasswordReset"
 
 const Customer = () => {
 
@@ -18,7 +19,7 @@ const Customer = () => {
     const params = useParams()
     const navigate = useNavigate()
 
-    const { dataLoading, obtainCustomerData, customerData, updateCustomer, setCustomerData } = useData()
+    const { dataLoading, obtainCustomerData, customerData, updateCustomer, setCustomerData, openClosePasswordResetDialog, passwordReset } = useData()
 
     const { name, lastName, email, customId, phoneNumber, comments, assets, orders, activeOrders } = customerData
 
@@ -69,6 +70,19 @@ const Customer = () => {
             console.log(error)
           }
           
+    }
+
+    const handlePasswordReset = async (e, user)=>{
+        e.preventDefault()
+
+        const reset = await passwordReset(user)
+        openClosePasswordResetDialog()
+
+        setAlert(reset)
+
+        setTimeout(()=>{
+            setAlert({})
+        },2000)
     }
 
     const { msg } = alert
@@ -195,12 +209,13 @@ const Customer = () => {
                         <div className="flex gap-3 px-3">
                             <button
                                 type="button"
-                                className="my-3 p-2 bg-user-secondary text-almost-white font-bold uppercase rounded-md w-1/3"
+                                className="my-3 p-2 bg-user-secondary text-almost-white hover:bg-user-primary-h font-bold uppercase rounded-md w-1/3 transition-colors"
                                 onClick={handleEditCustomer}
                             >Edit</button>
                             <button
                                 type="button"
                                 className="my-3 p2 bg-admin-light text-almost-black font-bold uppercase rounded-md w-1/3"
+                                onClick={openClosePasswordResetDialog}
                             >Password Reset</button>
                             <button
                                 type="button"
@@ -269,6 +284,7 @@ const Customer = () => {
                     }
                 </div>
             </div>
+            <DialogPasswordReset handlePasswordReset={handlePasswordReset} />
         </div>
   )
 }
