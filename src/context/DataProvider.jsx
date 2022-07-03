@@ -18,6 +18,7 @@ const DataProvider = ({children}) =>{
     const [ openCreateUserDialog, setOpenCreateUserDialog ] = useState(false)
     const [ openCreateItemDialog, setOpenCreateItemDialog ] = useState(false)
     const [ openPasswordResetDialog, setOpenPasswordResetDialog ] = useState(false)
+    const [ openDeleteUserDialog, setOpenDeleteUserDialog ] = useState(false)
 
 
     const openCloseUserDialog = () =>{
@@ -30,6 +31,10 @@ const DataProvider = ({children}) =>{
 
     const openClosePasswordResetDialog = () =>{
         setOpenPasswordResetDialog(!openPasswordResetDialog)
+    }
+
+    const openCloseDeleteUserDialog = () =>{
+        setOpenDeleteUserDialog(!openDeleteUserDialog)
     }
 
     const sortingUsersByComments = (data, sortOrder) => {
@@ -199,10 +204,12 @@ const DataProvider = ({children}) =>{
         try {
             const { data } = await axiosClient.put("user/update-user", customer, config(adminToken))
 
-            return {
-                msg: data.msg,
-                error: false
-            }
+            console.log(data)
+
+            // return {
+            //     msg: data.msg,
+            //     error: false
+            // }
         } catch (error) {
             return {
                 msg: error.response.data.msg,
@@ -226,6 +233,29 @@ const DataProvider = ({children}) =>{
                 msg: data.msg,
                 error: false
             }
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }    
+    }
+
+    const deleteUser = async id =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            const { data } = await axiosClient.post("user/delete-user", {id}, config(adminToken))
+
+            return {
+                msg: data.msg,
+                error: false
+            }
+            
         } catch (error) {
             return {
                 msg: error.response.data.msg,
@@ -473,14 +503,14 @@ const DataProvider = ({children}) =>{
             const adminToken = sessionStorage.getItem('admintoken')
             const { data } = await axiosClient.post("/admin/create-item", item, config(adminToken))
 
-            console.log(data)
             return {
                 alert: {
                     msg: "Item created",
                     error: false
                 },
                 item: {
-                    _id: data.item
+                    _id: data.item,
+                    customId: data.customId
                 }
             }     
         } catch (error) {
@@ -513,6 +543,9 @@ const DataProvider = ({children}) =>{
                 openCreateUserDialog,
                 setOpenCreateUserDialog,
                 openCloseUserDialog,
+                openCloseDeleteUserDialog,
+                openDeleteUserDialog,
+                deleteUser,
                 obtainComments,
                 commentList,
                 commentIsRead,

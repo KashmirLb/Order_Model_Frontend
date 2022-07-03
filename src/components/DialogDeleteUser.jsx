@@ -1,22 +1,16 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import useData from '../hooks/useData'
-import { generatePassword } from '../helpers'
 
-export default function DialogPasswordReset({handlePasswordReset}) {
+export default function DialogDeleteUser({handleDeleteUser}) {
 
-    const [ password, setPassword ] = useState("")
-  
-    const { openPasswordResetDialog, openClosePasswordResetDialog, customerData } = useData()
 
-    const handleGeneratePassword = () =>{
-        setPassword(generatePassword())
-    }
+    const { customerData, openCloseDeleteUserDialog, openDeleteUserDialog } = useData()
 
     return (
       <>  
-        <Transition appear show={openPasswordResetDialog} as={Fragment}>
-          <Dialog as="div" className="relative z-10" onClose={openClosePasswordResetDialog}>
+        <Transition appear show={openDeleteUserDialog} as={Fragment}>
+          <Dialog as="div" className="relative z-10" onClose={openCloseDeleteUserDialog}>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -45,37 +39,30 @@ export default function DialogPasswordReset({handlePasswordReset}) {
                       as="h3"
                       className="text-lg font-medium leading-6 text-admin-light"
                     >
-                      Reset Password
+                      Deleting user:
+                        <span
+                            className="text-almost-white ml-3">
+                            {customerData.customId} - {customerData.lastName}, {customerData.name}
+                        </span> 
                     </Dialog.Title>
-                    <form onSubmit={e=>handlePasswordReset(e, {_id: customerData._id, password: password})}>
+                    <form onSubmit={handleDeleteUser}>
                         <div className="p-3 text-admin-light">
-                            <label className=" block">Enter a new password:</label>
-                            <button
-                                type="button" 
-                                className="mt-2 px-2 bg-admin-primary rounded-md text-almost-white border border-admin-light"
-                                onClick={handleGeneratePassword}
-                            >
-                                Generate
-                            </button>
-                            <input
-                                className="text-almost-white bg-admin-primary mt-3 ml-6 px-2 border border-admin-light rounded-sm"
-                                value={password}
-                                onChange={e=>setPassword(e.target.value)}
-                            />
+                           <p className="text-almost-white text-lg">Are you sure you want to delete user?</p>
+                           <p className="text-red-600 mt-2 font-bold text-lg">User and all related information will be deleted permanently.</p>
                         </div>
                         <div className="mt-4 flex justify-around">
                             <button
                                 type="button"
                                 className="rounded-md px-8 bg-admin-secondary py-2 text-sm font-medium text-almost-white hover:bg-user-primary transition-colors"
-                                onClick={openClosePasswordResetDialog}
+                                onClick={openCloseDeleteUserDialog}
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                className="rounded-md px-8 bg-indigo-700 py-2 text-sm text-almost-white font-bold hover:bg-user-primary transition-colors"
+                                className="rounded-md px-8 bg-red-700 py-2 text-sm text-almost-white font-bold hover:bg-red-600 transition-colors"
                             >
-                                Reset
+                                Delete
                             </button>
                         </div>
                     </form>

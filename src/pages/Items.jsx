@@ -9,11 +9,17 @@ const Items = () => {
   const [ sortType, setSortType ] = useState("Last Orders")
   const [ sortOrder, setSortOrder ] = useState("Ascending")
   const [ sortOnlyActive, setSortOnlyActive ] = useState(false)
+  const [ loadingItems, setLoadingItems ] = useState(true)
 
   const { obtainItems, items, sortItems, openCloseItemDialog } = useData()
 
   useEffect(()=>{
-    obtainItems()
+
+    const loadItems = async()=>{
+      obtainItems()
+      setLoadingItems(false)
+    }
+    loadItems()
   },[])
 
   useEffect(()=>{
@@ -84,11 +90,12 @@ const Items = () => {
           </thead>
           <tbody>
             {
+              loadingItems ? <tr><td><Spinner/></td></tr> :
               filterItems.length ? filterItems.map( item =>(
                 <ItemPreview key={item._id} item={item} />
               ))
               :
-              <tr><td><Spinner/></td></tr>
+              <tr><td className="text-almost-white text-center">No Items found with this filter.</td></tr>
             }
           </tbody>
 

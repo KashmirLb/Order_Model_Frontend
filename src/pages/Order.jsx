@@ -2,12 +2,12 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import useData from "../hooks/useData"
 import Spinner from "../components/Spinner"
+import Alert from "../components/Alert"
 import { formatDate } from "../helpers"
-
-// Order appears correctly, need to function the add comment now.
 
 const Order = () => {
 
+  const [ alert, setAlert ] = useState({})
   const [ commentsRead, setCommentsRead ] = useState([])
   const [ orderLoading, setOrderLoading ] = useState(true)
   const [ commentText, setCommentText ] = useState("")
@@ -60,13 +60,25 @@ const Order = () => {
     try {
       await updateOrder(updatedOrder)
       setOrderData(updatedOrder)
+      setAlert({
+        msg: "Updated correctly",
+        error: false
+      })
       
     } catch (error) {
       console.log(error)
+      setAlert({
+        msg: "Update failed",
+        error: true
+      })
     }
     setUpdatedDescription("")
     setUpdatedStatus("")
     setEditingOrder(false)
+
+    setTimeout(()=>{
+      setAlert({})
+    },1500)
   }
 
   const handleCommentSubmit = async e =>{
@@ -82,6 +94,7 @@ const Order = () => {
     setOrderLoading(false)
   }
    
+  const { msg } = alert
   return (
     <>
       {
@@ -155,6 +168,7 @@ const Order = () => {
                   </button>
                 </div>
               )}
+              {msg && <Alert alert={alert}/>}
             </div>
             <div className="bg-admin-primary w-full rounded-md">
               <div className="md:mt-0 rounded-md mt-3 p-4 flex flex-col gap-2 max-h-largeDashboard w-full">

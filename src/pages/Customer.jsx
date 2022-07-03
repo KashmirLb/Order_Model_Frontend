@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import useData from "../hooks/useData"
+import useAuth from "../hooks/useAuth"
 import Spinner from "../components/Spinner"
 import { formatDate } from "../helpers"
 import Alert from "../components/Alert"
 import DialogPasswordReset from "../components/DialogPasswordReset"
+import DialogDeleteUser from "../components/DialogDeleteUser"
 
 const Customer = () => {
 
@@ -19,7 +21,10 @@ const Customer = () => {
     const params = useParams()
     const navigate = useNavigate()
 
-    const { dataLoading, obtainCustomerData, customerData, updateCustomer, setCustomerData, openClosePasswordResetDialog, passwordReset } = useData()
+    const { dataLoading, obtainCustomerData, customerData, updateCustomer, setCustomerData, openClosePasswordResetDialog, 
+        passwordReset, openCloseDeleteUserDialog, deleteUser } = useData()
+
+    const { prepareSearchList } = useAuth()
 
     const { name, lastName, email, customId, phoneNumber, comments, assets, orders, activeOrders } = customerData
 
@@ -83,6 +88,31 @@ const Customer = () => {
         setTimeout(()=>{
             setAlert({})
         },2000)
+    }
+
+    const handleDeleteUser = async e =>{
+        e.preventDefault()
+        try{
+            const message = await deleteUser(customerData._id)
+
+            openCloseDeleteUserDialog()
+            setAlert(message)
+
+            if(!message.error){
+                prepareSearchList()
+            }
+
+            setTimeout(()=>{
+                setAlert({})
+                if(!message.error){
+                    setCustomerData({})
+                    navigate("/admin-console/users")
+                }
+            },2000)
+        }
+        catch(error){
+            console.log(error)
+        }
     }
 
     const { msg } = alert
@@ -214,12 +244,13 @@ const Customer = () => {
                             >Edit</button>
                             <button
                                 type="button"
-                                className="my-3 p2 bg-admin-light text-almost-black font-bold uppercase rounded-md w-1/3"
+                                className="my-3 p2 bg-admin-light hover:bg-admin-light-h text-almost-black font-bold uppercase rounded-md w-1/3"
                                 onClick={openClosePasswordResetDialog}
                             >Password Reset</button>
                             <button
                                 type="button"
-                                className="my-3 p-2 bg-red-700 text-almost-white font-bold uppercase rounded-md w-1/3"
+                                className="my-3 p-2 bg-red-700 hover:bg-red-600 text-almost-white font-bold uppercase rounded-md w-1/3"
+                                onClick={openCloseDeleteUserDialog}
                             >
                                 Delete
                             </button>
@@ -285,6 +316,7 @@ const Customer = () => {
                 </div>
             </div>
             <DialogPasswordReset handlePasswordReset={handlePasswordReset} />
+            <DialogDeleteUser handleDeleteUser={handleDeleteUser} />
         </div>
   )
 }

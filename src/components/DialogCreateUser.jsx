@@ -1,7 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Dialog, Transition, Popover } from '@headlessui/react'
-import { Fragment, useState } from 'react'
 import useData from '../hooks/useData'
 import useAuth from '../hooks/useAuth'
 import Alert from './Alert'
@@ -85,8 +84,9 @@ export default function DialogCreateUser({creatingOrder}) {
       setPassword("")
       setItems([])
 
+      await prepareSearchList()
+
       if(creatingOrder){
-        await prepareSearchList()
         await obtainCustomerData(addingCustomer.user._id)
         setTimeout(()=>{
           setAlert({})

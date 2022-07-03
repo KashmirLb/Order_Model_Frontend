@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Popover } from '@headlessui/react'
 import useAuth from "../hooks/useAuth"
 import useData from "../hooks/useData"
 import SearchBar from "../components/SearchBar"
@@ -15,11 +16,13 @@ const CreateOrder = () => {
     const [ status, setStatus ] = useState("Open")
     const [ item, setItem ] = useState("")
     const [ userList, setUserList] = useState([])
+    const [ itemName, setItemName ] = useState("")
+    const [ itemDescription, setItemDescription ] = useState("")
 
     const navigate = useNavigate()
 
-    const { searchList } = useAuth()
-    const { customerData, setCustomerData, openCloseUserDialog, createOrder } = useData()
+    const { searchList, prepareSearchList } = useAuth()
+    const { customerData, setCustomerData, openCloseUserDialog, createOrder, createItem } = useData()
 
     useEffect(()=>{
         setAlert({})
@@ -82,6 +85,41 @@ const CreateOrder = () => {
 
     }
 
+    const handleCreateItem = async () =>{ 
+        if(itemName===""){
+            setAlert({
+                msg: "You need to provide a name",
+                error: true
+            })
+            return
+        }   
+        if(!customerData._id){
+            setAlert({
+                msg: "You need to select the owner",
+                error: true
+            })
+            return
+        }   
+        const addedItem = await createItem({
+            name: itemName,
+            description: itemDescription,
+            owner: customerData._id
+        })  
+        setAlert(addedItem.alert)
+
+        const newCustomer = {...customerData}
+        newCustomer.assets = [...newCustomer.assets, {name: itemName, description: itemDescription, _id: addedItem.item._id, customId: addedItem.item.customId}]
+
+        setCustomerData(newCustomer)
+        setItemName("")
+        setItemDescription("")
+        prepareSearchList()
+
+        setTimeout(()=>{
+            setAlert({})
+          },1500)
+    }
+
     const { msg, error } = alert
 
     const styleBorders = input =>{
@@ -142,7 +180,7 @@ const CreateOrder = () => {
                         </select>
                     </div>
                 </div>
-                <div className="bg-admin-secondary w-full rounded-md">
+                <div className="bg-admin-secondary w-full rounded-md mt-5 md:mt-0">
                     <div className="p-3">
                         <div className="flex justify-between items-center">
                             <label 
@@ -181,6 +219,60 @@ const CreateOrder = () => {
                                         }
                                         <option value="None" className="text-red-700 uppercase font-bold">None</option>
                                     </select>
+                                    <Popover className="relative w-1/2">
+                                        <Popover.Button className="block text-almost-white m-1 hover:text-admin-light transition-colors">
+                                            
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            
+                                        </Popover.Button>
+                                        <Popover.Panel className="absolute z-10 translate-x-10 -translate-y-72  rounded-sm">
+                                            <div 
+                                                className="m-2 bg-admin-secondary p-2 rounded-sm border-4 border-user-secondary"
+                                            >
+                                                <label 
+                                                    className=" text-admin-light text-xl font-bold"
+                                                    htmlFor="itemName"
+                                                >Item Name:</label>
+                                                <input 
+                                                    type="text"
+                                                    id="itemName"
+                                                    autoComplete="item-name"
+                                                    placeholder="Item Name"
+                                                    className="w-full mt-3 p-2 border rounded-sm bg-gray-50 mb-3"
+                                                    value={itemName}
+                                                    onChange={e=>setItemName(e.target.value)}
+                                                />
+                                                <label 
+                                                    className=" text-admin-light text-xl font-bold"
+                                                    htmlFor="itemDescription"
+                                                >Description</label>
+                                                <textarea 
+                                                    className="block w-full mt-3 p-2 border rounded-sm bg-gray-50"
+                                                    id="itemDescription"
+                                                    value={itemDescription}
+                                                    onChange={e=>setItemDescription(e.target.value)}
+                                                />
+                                                <div className="mt-4 flex justify-around">
+                                                    <Popover.Button
+                                                        type="button"
+                                                        className="rounded-md px-8 bg-admin-primary py-2 text-sm font-medium text-almost-white hover:bg-user-primary transition-colors"
+                                                    >
+                                                        Cancel
+                                                    </Popover.Button>
+                                                    <Popover.Button
+                                                        type="button"
+                                                        className={`${itemName==="" ? "bg-admin-primary" : "bg-admin-light hover:bg-admin-light-h" } rounded-md px-8 py-2 text-sm text-almost-black font-bold  transition-colors`}
+                                                        disabled={itemName==="" ? true : false}
+                                                        onClick={handleCreateItem}
+                                                    >
+                                                        Add
+                                                    </Popover.Button>
+                                                </div>
+                                            </div>
+                                        </Popover.Panel>
+                                    </Popover>
                                 </div>
                             )
                         }

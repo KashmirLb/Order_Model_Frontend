@@ -17,7 +17,7 @@ export default function DialogCreateItem() {
     const navigate = useNavigate()
 
     const { openCreateItemDialog, openCloseItemDialog, customerData, setCustomerData, createItem } = useData()
-    const { searchList } = useAuth()
+    const { searchList, prepareSearchList } = useAuth()
 
     useEffect(()=>{
 
@@ -58,7 +58,8 @@ export default function DialogCreateItem() {
             owner: customerData._id
         })  
         setAlert(addedItem.alert)
-
+        
+        prepareSearchList()
         setTimeout(()=>{
             setAlert({})
             openCloseItemDialog()
