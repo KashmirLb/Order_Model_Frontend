@@ -36,41 +36,42 @@ const AuthProvider = ({children}) =>{
         }
 
     }
-   
-    useEffect(()=> {
-        const obtainUser = async () =>{
 
-            const adminToken = sessionStorage.getItem('admintoken')
+    const obtainUser = async () =>{
 
-            if(adminToken){
-                try {
-                    const { data } = await axiosClient('/admin/check-admin', config(adminToken))
-    
-                    setAuth(data)
-                    navigate("/admin-console")
-                    prepareSearchList()
-                } catch (error) {
-                    console.log(error)
-                }
+        const adminToken = sessionStorage.getItem('admintoken')
+
+        if(adminToken){
+            try {
+                const { data } = await axiosClient('/admin/check-admin', config(adminToken))
+
+                setAuth(data)
+                navigate("/admin-console")
+                prepareSearchList()
+            } catch (error) {
+                console.log(error)
             }
-            else{
-                const token = sessionStorage.getItem('usertoken')
-    
-                if(!token){
-                    setLoading(false)
-                    return
-                }
-                try {
-                    const { data } = await axiosClient('/user/profile', config(token))
-    
-                    setAuth(data)
-                    navigate("/user")
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-            setLoading(false)
         }
+        else{
+            const token = sessionStorage.getItem('usertoken')
+
+            if(!token){
+                setLoading(false)
+                return
+            }
+            try {
+                const { data } = await axiosClient('/user/profile', config(token))
+
+                setAuth(data)
+                navigate("/user")
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        setLoading(false)
+    }
+   
+    useEffect(()=> {  
         obtainUser()
     },[])
 
@@ -82,7 +83,8 @@ const AuthProvider = ({children}) =>{
                 loading,
                 setLoading,
                 searchList,
-                prepareSearchList
+                prepareSearchList,
+                obtainUser
             }}
         >
             {children}

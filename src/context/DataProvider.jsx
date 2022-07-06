@@ -12,6 +12,7 @@ const DataProvider = ({children}) =>{
     const [ commentList, setCommentList ] = useState([])
     const [ orders, setOrders ] = useState([])
     const [ orderData, setOrderData ] = useState({})
+    const [ lastViewedOrders, setLastViewedOrders ] = useState([])
     const [ items, setItems ] = useState([])
     const [ itemData, setItemData ] = useState({})
     const [ openDateDialog, setOpenDateDialog ] = useState(false)
@@ -19,6 +20,8 @@ const DataProvider = ({children}) =>{
     const [ openCreateItemDialog, setOpenCreateItemDialog ] = useState(false)
     const [ openPasswordResetDialog, setOpenPasswordResetDialog ] = useState(false)
     const [ openDeleteUserDialog, setOpenDeleteUserDialog ] = useState(false)
+    const [ openDeleteItemDialog, setOpenDeleteItemDialog ] = useState(false)
+    const [ openCreateAdminDialog, setOpenCreateAdminDialog ] = useState(false)
 
 
     const openCloseUserDialog = () =>{
@@ -35,6 +38,14 @@ const DataProvider = ({children}) =>{
 
     const openCloseDeleteUserDialog = () =>{
         setOpenDeleteUserDialog(!openDeleteUserDialog)
+    }
+
+    const openCloseDeleteItemDialog = () =>{
+        setOpenDeleteItemDialog(!openDeleteItemDialog)
+    }
+
+    const openCloseCreateAdminDialog = () =>{
+        setOpenCreateAdminDialog(!openCreateAdminDialog)
     }
 
     const sortingUsersByComments = (data, sortOrder) => {
@@ -107,7 +118,7 @@ const DataProvider = ({children}) =>{
             setDataLoading(true)
             
             const adminToken = sessionStorage.getItem('admintoken')
-            const { data } = await axiosClient('/admin/user-list', config(adminToken))
+            const { data } = await axiosClient('/user/user-list', config(adminToken))
 
             sortingUsersByComments(data)
         } catch (error) {
@@ -150,7 +161,7 @@ const DataProvider = ({children}) =>{
 
         try {
             const adminToken = sessionStorage.getItem('admintoken')
-            const { data } = await axiosClient.post("/admin/create-user", customer, config(adminToken))
+            const { data } = await axiosClient.post("/user/create-user", customer, config(adminToken))
 
             return {
                 alert: {
@@ -180,7 +191,7 @@ const DataProvider = ({children}) =>{
                     return
                 }
                 
-                const { data } = await axiosClient(`/admin/user-data/${id}`, config(adminToken))
+                const { data } = await axiosClient(`/user/user-data/${id}`, config(adminToken))
 
                 const activeOrders = data.orders.filter(order => order.status !== "Closed" )
                 const activeAdded = {...data, activeOrders}
@@ -347,11 +358,11 @@ const DataProvider = ({children}) =>{
     }
 
     const sortOrders = sort => {
-
+        
         if(sort==="Last updated"){
             const hasComment = [...orders].filter( order => order.comments[0])
             const nonComment = [...orders].filter( order => !order.comments[0])
-
+            
             const commentsSorted = [...hasComment].sort((a,b)=>new Date(b.comments[0].createdAt)- new Date(a.comments[0].createdAt))
             setOrders([...commentsSorted, ...nonComment])
         }
@@ -359,13 +370,13 @@ const DataProvider = ({children}) =>{
             setOrders(sortByLastCreated(orders))
         }
     }
-
+    
     const createOrder = async newOrder =>{
-
+        
         try {
             const adminToken = sessionStorage.getItem('admintoken')
             const { data } = await axiosClient.post("/order/create-order", newOrder, config(adminToken))
-
+            
             return {
                 alert: {
                     msg: data.msg,
@@ -384,7 +395,7 @@ const DataProvider = ({children}) =>{
             }
         } 
     }
-
+    
     const obtainOrderData = async id =>{
         try {
             setDataLoading(true)
@@ -395,16 +406,44 @@ const DataProvider = ({children}) =>{
             }
             
             const { data } = await axiosClient(`/order/obtain-order-data/${id}`, config(adminToken))
-
-        
-           
+            
+            
+            
             setOrderData(data)
-
-
+            
+            
         } catch (error) {
             console.log(error.response.data.msg)
         }
         setDataLoading(false)
+    }
+    
+    const addLastViewedOrder = async id =>{
+        try {
+            const adminToken = sessionStorage.getItem('admintoken')
+            await axiosClient.put("/admin/add-viewed-order", {id}, config(adminToken))
+        } catch (error) {
+            console.log(error)
+        } 
+    }
+
+    const obtainLastViewedOrders = async ()=>{
+        setDataLoading(true)
+        try {            
+            const adminToken = sessionStorage.getItem('admintoken')
+
+            if(!adminToken){
+                setDataLoading(false)
+                   return
+            }
+
+            const { data } = await axiosClient('/admin/obtain-last-viewed', config(adminToken))
+
+           setLastViewedOrders(data.orders.reverse())     
+        } catch (error) {
+            console.log(error.response.data.msg)
+        }    
+        setDataLoading(false)  
     }
 
     const updateOrder = async order =>{
@@ -497,9 +536,10 @@ const DataProvider = ({children}) =>{
 
     const createItem = async item =>{
 
+    
         try {
             const adminToken = sessionStorage.getItem('admintoken')
-            const { data } = await axiosClient.post("/admin/create-item", item, config(adminToken))
+            const { data } = await axiosClient.post("/item/create-item", item, config(adminToken))
 
             return {
                 alert: {
@@ -543,6 +583,51 @@ const DataProvider = ({children}) =>{
         }    
     }
 
+    const deleteItem = async id =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            const { data } = await axiosClient.post("item/delete-item", {id}, config(adminToken))
+
+            return {
+                msg: data.msg,
+                error: false
+            }
+            
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }    
+    }
+
+    const updateAdmin = async admin =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            const { data } = await axiosClient.put("admin/update-admin", admin, config(adminToken))
+
+            return {
+                msg: data.msg,
+                error: false
+            }
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }
+    }
+
     return(
         <DataContext.Provider
             value={{
@@ -576,6 +661,9 @@ const DataProvider = ({children}) =>{
                 sortOrders,
                 obtainOrderData,
                 orderData,
+                addLastViewedOrder,
+                obtainLastViewedOrders,
+                lastViewedOrders,
                 setOrderData,
                 createOrder,
                 updateOrder,
@@ -588,7 +676,13 @@ const DataProvider = ({children}) =>{
                 obtainItemData,
                 itemData,
                 setItemData,
-                updateItem
+                updateItem,
+                openCloseDeleteItemDialog,
+                openDeleteItemDialog,
+                deleteItem,
+                updateAdmin,
+                openCreateAdminDialog,
+                openCloseCreateAdminDialog
             }}
         >
             {children}

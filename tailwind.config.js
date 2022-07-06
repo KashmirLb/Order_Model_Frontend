@@ -19,7 +19,8 @@ module.exports = {
       },
       maxHeight: {
         'dashboard':'60vh',
-        'largeDashboard':'80vh'
+        'largeDashboard':'80vh',
+        'smallDashboard' : '25vh'
       }
     },
   },

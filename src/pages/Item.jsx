@@ -2,15 +2,15 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import useData from "../hooks/useData"
 import Spinner from "../components/Spinner"
-import { formatDate } from "../helpers"
 import Alert from "../components/Alert"
-
-// Single item page just finished!!!!!
+import { formatDate } from "../helpers"
+import DialogDeleteItem from "../components/DialogDeleteItem"
+import useAuth from "../hooks/useAuth"
 
 /*
-    Enable edit button 
     Enable delete button (item will be set to deleted, but not removed)
 */
+
 const Item = () => {
 
     const [ alert, setAlert ] = useState({})
@@ -22,11 +22,16 @@ const Item = () => {
     const params = useParams()
     const navigate = useNavigate()
 
-    const { dataLoading, obtainItemData, itemData, updateItem, setItemData } = useData()
+    const { dataLoading, obtainItemData, itemData, updateItem, setItemData, openCloseDeleteItemDialog, openDeleteItemDialog, deleteItem } = useData()
+    const { prepareSearchList } = useAuth()
 
     const { name, customId, description, owner, orders, createdAt } = itemData
 
     useEffect(()=>{
+
+        if(openDeleteItemDialog){
+            openCloseDeleteItemDialog()
+        }
 
         const getItem = async () =>{
             await obtainItemData(params.id)
@@ -71,6 +76,29 @@ const Item = () => {
         setTimeout(()=>{
             setAlert({})
         },1500)
+    }
+
+    const handleDeleteItem = async e  =>{
+        e.preventDefault()
+
+        try{
+            const deletingItem = await deleteItem(itemData._id)
+    
+            openCloseDeleteItemDialog()
+            setAlert(deletingItem)
+            await prepareSearchList()
+    
+            setTimeout(()=>{
+                setAlert({})
+                if(!deletingItem.error){
+                    setItemData({})
+                    navigate("/admin-console/items")
+                }
+            },2000)
+
+        }catch(error){
+            console.log(error)
+        }
     }
 
     const { msg } = alert
@@ -163,6 +191,7 @@ const Item = () => {
                                 <button
                                     type="button"
                                     className="my-3 p-2 bg-red-700 hover:bg-red-600 text-almost-white font-bold uppercase rounded-md w-1/3 transition-colors"
+                                    onClick={openCloseDeleteItemDialog}
                                 >
                                     Delete
                                 </button>
@@ -207,6 +236,7 @@ const Item = () => {
                     }
                 </div>
             </div>
+            <DialogDeleteItem handleDeleteItem={handleDeleteItem} />
         </div>
   )
 }

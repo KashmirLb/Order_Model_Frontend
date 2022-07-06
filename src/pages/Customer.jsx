@@ -21,8 +21,8 @@ const Customer = () => {
     const params = useParams()
     const navigate = useNavigate()
 
-    const { dataLoading, obtainCustomerData, customerData, updateCustomer, setCustomerData, openClosePasswordResetDialog, 
-        passwordReset, openCloseDeleteUserDialog, deleteUser } = useData()
+    const { dataLoading, obtainCustomerData, customerData, updateCustomer, setCustomerData, openClosePasswordResetDialog, openPasswordResetDialog,
+        passwordReset, openCloseDeleteUserDialog, openDeleteUserDialog, deleteUser } = useData()
 
     const { prepareSearchList } = useAuth()
 
@@ -30,6 +30,12 @@ const Customer = () => {
 
     useEffect(()=>{
 
+        if(openDeleteUserDialog){
+            openCloseDeleteUserDialog()
+        }
+        if(openPasswordResetDialog){
+            openClosePasswordResetDialog()
+        }
         const getCustomer = async () =>{
             await obtainCustomerData(params.id)
             setCustomerLoading(false)
@@ -144,11 +150,11 @@ const Customer = () => {
                             <tr className="h-2"></tr>
                             <tr className="bg-admin-primary">
                                 <td className="p-2">Name:</td>
-                                <td className="text-almost-white">
+                                <td className="text-almost-white ">
                                     {editCustomer ? (
                                         <input
                                             type="text"
-                                            className="text-almost-black px-2 rounded-md"
+                                            className="text-almost-black px-2 rounded-md w-5/6"
                                             value={editName}
                                             onChange={e=>setEditName(e.target.value)}
                                         />
@@ -162,7 +168,7 @@ const Customer = () => {
                                     {editCustomer ? (
                                             <input
                                                 type="text"
-                                                className="text-almost-black px-2 rounded-md"
+                                                className="text-almost-black px-2 rounded-md w-5/6"
                                                 value={editLastName}
                                                 onChange={e=>setEditLastName(e.target.value)}
                                             />
@@ -176,7 +182,7 @@ const Customer = () => {
                                     {editCustomer ? (
                                             <input
                                                 type="email"
-                                                className="text-almost-black px-2 rounded-md"
+                                                className="text-almost-black px-2 rounded-md w-5/6"
                                                 value={editEmail}
                                                 onChange={e=>setEditEmail(e.target.value)}
                                             />
@@ -190,7 +196,7 @@ const Customer = () => {
                                     {editCustomer ? (
                                             <input
                                                 type="text"
-                                                className="text-almost-black px-2 rounded-md"
+                                                className="text-almost-black px-2 rounded-md w-5/6"
                                                 value={editPhoneNumber}
                                                 onChange={e=>setEditPhoneNumber(e.target.value)}
                                             />
@@ -202,7 +208,12 @@ const Customer = () => {
                                 <td className="p-2">Assets:</td>
                                 <td className="text-almost-white">
                                     <ul>
-                                        {assets?.length ? assets.map((item)=> <li key={item._id}>{item.customId} - {item.name}</li>)
+                                        {assets?.length ? assets.map((item)=> 
+                                            <li 
+                                                className="hover:text-admin-light hover:cursor-pointer"
+                                                key={item._id}
+                                                onClick={()=>navigate(`/admin-console/items/${item._id}`)}
+                                            >{item.customId} - {item.name}</li>)
                                         :
                                         <li>No items available</li>}
                                     </ul>
@@ -214,7 +225,16 @@ const Customer = () => {
                                 <td className="text-almost-white">
                                     {orders?.length ? orders.map((order, index)=>{
                                         if(index<4){
-                                            return <li className="list-none mb-4" key={order._id}><span className="text-admin-light">{order.customId}</span> - {order.title}</li>
+                                            return (
+                                                <li 
+                                                    className="list-none mb-4" 
+                                                    key={order._id}
+                                                >
+                                                    <span 
+                                                        className="text-admin-light hover:text-almost-white hover:cursor-pointer"
+                                                        onClick={()=>navigate(`/admin-console/orders/${order._id}`)}
+                                                    >{order.customId}</span> - {order.title}
+                                                </li>)
                                         }
                                         else return null
                                     })

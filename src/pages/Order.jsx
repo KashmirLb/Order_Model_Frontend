@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useEffect, useState, useRef } from "react"
+import { useParams, useNavigate } from "react-router-dom"
 import useData from "../hooks/useData"
 import Spinner from "../components/Spinner"
 import Alert from "../components/Alert"
@@ -8,35 +8,38 @@ import { formatDate } from "../helpers"
 const Order = () => {
 
   const [ alert, setAlert ] = useState({})
-  const [ commentsRead, setCommentsRead ] = useState([])
   const [ orderLoading, setOrderLoading ] = useState(true)
   const [ commentText, setCommentText ] = useState("")
   const [ editingOrder, setEditingOrder ] = useState(false)
   const [ updatedDescription, setUpdatedDescription ] = useState("")
   const [ updatedStatus, setUpdatedStatus ] = useState("")
 
-  const params = useParams()
+  const firstLoad = useRef("")
 
-  const { orderData, obtainOrderData, setOrderData, commentIsRead, createComment, updateOrder } = useData()
+  const params = useParams()
+  const navigate = useNavigate()
+
+  const { orderData, obtainOrderData, setOrderData, commentIsRead, createComment, updateOrder, addLastViewedOrder } = useData()
 
   useEffect(()=>{
     setOrderData({})
-    const getData = async () =>{
+    if(firstLoad.current!==params.id){
+      addLastViewedOrder(params.id)
+      firstLoad.current = params.id
 
-      await obtainOrderData(params.id)
-      setCommentsRead(orderData.comments)
+      const getData = async () =>{
+        await obtainOrderData(params.id)
+      }
+      getData()
     }
-    getData()
     setOrderLoading(false)
   },[params])
 
   const handleCommentRead = async comment =>{
+  
     if(comment.adminRead===false){
       comment.adminRead=true
-      const commentArray = commentsRead.map(selectComment => selectComment._id === comment._id ? comment : selectComment)
-  
       await commentIsRead(comment._id)
-      setCommentsRead(commentArray)
     }
   }
 
@@ -119,8 +122,20 @@ const Order = () => {
                 }
               </div>
               <p className="text-almost-white py-2 text-lg font-bold">{orderData.title}</p>
-              <div>Customer: <span className="text-almost-white">{orderData.customer.lastName}, {orderData.customer.name}</span></div>
-              <div>Item: <span className="text-almost-white">{orderData.asset.customId} - {orderData.asset.name}</span></div>
+              <div>Customer: 
+                <span 
+                  className="text-almost-white hover:text-admin-light hover:cursor-pointer"
+                  onClick={()=>navigate(`/admin-console/users/${orderData.customer._id}`)}
+                > {orderData.customer.lastName}, {orderData.customer.name}
+                </span>
+              </div>
+              <div>Item: 
+                <span 
+                  className="text-almost-white hover:text-admin-light hover:cursor-pointer"
+                  onClick={()=>navigate(`/admin-console/items/${orderData.asset._id}`)}
+                > {orderData.asset.customId} - {orderData.asset.name}
+                </span>
+              </div>
               <p className="text-lg py-2 font-bold">Description:</p>
               <p className="text-almost-white p-3 border border-admin-light rounded-md whitespace-pre-wrap">
                 {editingOrder ? (
