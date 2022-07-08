@@ -15,6 +15,7 @@ const DataProvider = ({children}) =>{
     const [ lastViewedOrders, setLastViewedOrders ] = useState([])
     const [ items, setItems ] = useState([])
     const [ itemData, setItemData ] = useState({})
+    const [ adminList, setAdminList ] = useState([])
     const [ openDateDialog, setOpenDateDialog ] = useState(false)
     const [ openCreateUserDialog, setOpenCreateUserDialog ] = useState(false)
     const [ openCreateItemDialog, setOpenCreateItemDialog ] = useState(false)
@@ -22,6 +23,7 @@ const DataProvider = ({children}) =>{
     const [ openDeleteUserDialog, setOpenDeleteUserDialog ] = useState(false)
     const [ openDeleteItemDialog, setOpenDeleteItemDialog ] = useState(false)
     const [ openCreateAdminDialog, setOpenCreateAdminDialog ] = useState(false)
+    const [ openManageAdminDialog, setOpenManageAdminDialog ] = useState(false)
 
 
     const openCloseUserDialog = () =>{
@@ -46,6 +48,11 @@ const DataProvider = ({children}) =>{
 
     const openCloseCreateAdminDialog = () =>{
         setOpenCreateAdminDialog(!openCreateAdminDialog)
+    }
+
+    const openCloseManageAdminDialog = () =>{
+        setCustomerData({})
+        setOpenManageAdminDialog(!openManageAdminDialog)
     }
 
     const sortingUsersByComments = (data, sortOrder) => {
@@ -628,6 +635,98 @@ const DataProvider = ({children}) =>{
         }
     }
 
+    const createAdmin = async admin =>{
+
+        try {
+            const adminToken = sessionStorage.getItem('admintoken')
+            const { data } = await axiosClient.post("/admin/create-admin", admin, config(adminToken))
+
+            return {
+                alert: {
+                    msg: data.msg,
+                    error: false
+                }
+            }     
+        } catch (error) {
+            return {
+                alert: {
+                    msg: error.response.data.msg,
+                    error: true
+                }
+            }
+        }
+    }
+
+    const obtainAdminList = async () =>{
+        try {
+            
+            const adminToken = sessionStorage.getItem('admintoken')
+            const { data } = await axiosClient('/admin/admin-list', config(adminToken))
+
+            setAdminList(data)
+
+        } catch (error) {
+            console.log(error.response.data.msg)
+        }       
+    }
+
+    const adminPasswordReset = async admin =>{
+
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            const { data } = await axiosClient.put("admin/reset-password", admin, config(adminToken))
+
+            return {
+                msg: data.msg,
+                error: false
+            }
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }    
+    }
+
+    const activateDisableAdmin = async id =>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            const { data } = await axiosClient.put("admin/activate-disable", id, config(adminToken))
+
+            return {
+                msg: data.msg,
+                error: false
+            }
+        } catch (error) {
+            return {
+                msg: error.response.data.msg,
+                error: true
+            }
+        }    
+    }
+
+    const logoutAdminData = () =>{
+        setCustomers([])
+        setCustomerData({})
+        setCommentList([])
+        setOrders([])
+        setOrderData({})
+        setLastViewedOrders([])
+        setItems([])
+        setItemData({})
+        setAdminList([])
+    }
+
     return(
         <DataContext.Provider
             value={{
@@ -682,7 +781,15 @@ const DataProvider = ({children}) =>{
                 deleteItem,
                 updateAdmin,
                 openCreateAdminDialog,
-                openCloseCreateAdminDialog
+                openCloseCreateAdminDialog,
+                createAdmin,
+                adminList,
+                obtainAdminList,
+                openManageAdminDialog,
+                openCloseManageAdminDialog,
+                adminPasswordReset,
+                activateDisableAdmin,
+                logoutAdminData
             }}
         >
             {children}

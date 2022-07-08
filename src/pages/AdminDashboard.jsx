@@ -26,7 +26,7 @@ const AdminDashboard = () => {
   
   return (
     <>
-      <div className="flex w-1/2 justify-around">
+      <div className="flex md:w-1/2 justify-around">
         <button
           type="button"
           className="rounded-md px-10 bg-admin-light py-4 uppercase text-xl font-bold text-almost-black

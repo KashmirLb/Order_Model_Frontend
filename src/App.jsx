@@ -16,6 +16,8 @@ import Settings from './pages/Settings'
 import { DataProvider } from './context/DataProvider'
 import CreateOrder from './pages/CreateOrder'
 import Order from './pages/Order'
+import UserMessages from './pages/UserMessages'
+import UserOrders from './pages/UserOrders'
 
 function App() {
  
@@ -41,8 +43,8 @@ function App() {
             </Route>
             <Route path="/user" element={<UserLayout/>}>
               <Route index element={<UserDashboard/>}/>
-              <Route path="messages" element={<Messages/>}/>
-              <Route path="orders" element={<Orders/>}/>
+              <Route path="messages" element={<UserMessages/>}/>
+              <Route path="orders" element={<UserOrders/>}/>
               <Route path="items" element={<Items/>}/>
               <Route path="settings" element={<Settings/>}/>
             </Route>

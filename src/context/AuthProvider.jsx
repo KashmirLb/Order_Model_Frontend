@@ -75,6 +75,11 @@ const AuthProvider = ({children}) =>{
         obtainUser()
     },[])
 
+    const logoutAuth = () =>{
+        setAuth({})
+        setSearchList([])
+    }
+
     return(
         <AuthContext.Provider
             value={{
@@ -84,7 +89,8 @@ const AuthProvider = ({children}) =>{
                 setLoading,
                 searchList,
                 prepareSearchList,
-                obtainUser
+                obtainUser,
+                logoutAuth
             }}
         >
             {children}

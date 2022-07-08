@@ -91,10 +91,11 @@ export default function DialogCreateAdmin({handleCreateAdmin}) {
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-95"
                 >
-                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-admin-primary p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-admin-primary p-6 text-left
+                    align-middle shadow-xl transition-all border border-admin-light">
                     <Dialog.Title
                       as="h3"
-                      className="text-4xl font-bold leading-6 text-red-600 pb-2"
+                      className="text-4xl font-bold leading-6 text-admin-light pb-2"
                     >
                       New Admin
                     </Dialog.Title>

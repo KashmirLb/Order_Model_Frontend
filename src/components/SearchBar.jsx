@@ -14,11 +14,21 @@ export default function SearchBar({searchList, sidebar}) {
 
   const navigate = useNavigate()
 
+  const customId = item =>{
+
+    if(item.customId){
+      return item.customId
+    }
+    else{
+      return item.adminId
+    }
+  }
+
   const filteredSearch =
     query === ''
       ? searchList
       : searchList.filter((item) =>
-          item.customId
+          customId(item)
             .toLowerCase()
             .replace(/\s+/g, '')
             .includes(query.toLowerCase().replace(/\s+/g, ''))
@@ -42,7 +52,7 @@ export default function SearchBar({searchList, sidebar}) {
             <Combobox.Input
               className="w-full border-none py-3 pl-3 pr-10 text-sm leading-5 text-almost-white focus:ring-0 bg-admin-primary"
               placeholder='Search'
-              displayValue={query !=="" ? (item) => item.customId : ""}
+              displayValue={query !=="" ? (item) => customId(item) : ""}
               onChange={ e => setQuery(e.target.value)}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -66,7 +76,7 @@ export default function SearchBar({searchList, sidebar}) {
               (
                 filteredSearch.map((item) => (
                   <Combobox.Option
-                    key={item.customId}
+                    key={customId(item)}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
                         active ? 'bg-admin-secondary text-admin-light' : 'text-almost-white'
@@ -81,7 +91,7 @@ export default function SearchBar({searchList, sidebar}) {
                             selected ? 'font-medium' : 'font-normal'
                           }`}
                         >
-                          {numbers.includes(query.charAt(1)) ? item.customId : <>{item.lastName}, {item.name}</>}
+                          {numbers.includes(query.charAt(1)) ? customId(item) : <>{item.lastName}, {item.name}</>}
                         </span>
                         {selected ? (
                           <span

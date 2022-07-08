@@ -12,7 +12,7 @@ const UserLayout = () => {
 
   return (
         <>
-            {auth?._id ?  
+            {auth?.customId ?  
             (
                 <div className="min-h-screen bg-almost-white overflow-hidden">
                     <Header />

@@ -5,17 +5,19 @@ import Spinner from "../components/Spinner"
 import useData from "../hooks/useData"
 import useAuth from "../hooks/useAuth"
 import DialogCreateAdmin from "../components/DialogCreateAdmin"
+import DialogManageAdmin from "../components/DialogManageAdmin"
 
 const Settings = () => {
 
   const [ alert, setAlert ] = useState({})
+  const [ deactivate, setDeactivate ] = useState(false)
   const [ adminLoading, setAdminLoading ] = useState(false)
   const [ editingAdmin, setEditingAdmin ] = useState(false)
   const [ updatedName, setUpdatedName ] = useState("")
   const [ updatedLastName, setUpdatedLastName ] = useState("")
   const [ updatedEmail, setUpdatedEmail ] = useState("")
 
-  const { updateAdmin, createAdmin, openCloseCreateAdminDialog } = useData()
+  const { updateAdmin, openCloseCreateAdminDialog, createAdmin, openCloseManageAdminDialog, adminPasswordReset, customerData, activateDisableAdmin } = useData()
   const { auth, obtainUser } = useAuth()
 
   const handleEditing = () =>{
@@ -61,18 +63,13 @@ const Settings = () => {
   }
 
   const handleCreateAdmin = async admin =>{
+
     const { name, lastName, password, email } = admin
 
     if([name, lastName, password, email].includes("")){
       return {msg: "Mandatory fields missing", error: true}
     }
-    const addingAdmin = await createAdmin({
-      name,
-      lastName,
-      password,
-      email,
-      firstLogin
-    })
+    const addingAdmin = await createAdmin(admin)
 
     setAlert(addingAdmin.alert)
 
@@ -81,6 +78,47 @@ const Settings = () => {
         setAlert({})
       },2000)
     }
+    return addingAdmin
+  }
+
+  const handlePasswordReset = async (e, password)=>{
+    e.preventDefault()
+
+    if(password===""){
+      openCloseManageAdminDialog()
+      setAlert({
+          msg: "Password can't be empty",
+          error: true
+      })
+      setTimeout(()=>{
+          setAlert({})
+      },1500)
+      return
+  }
+
+  const reset = await adminPasswordReset({_id: customerData._id, password})
+  
+  setAlert(reset)
+  openCloseManageAdminDialog()
+
+  setTimeout(()=>{
+      setAlert({})
+  },2000)
+
+
+  }
+
+  const handleActivateDisableAdmin = async e=>{
+    e.preventDefault()
+
+    const response = await activateDisableAdmin({_id: customerData._id})
+  
+    setAlert(response)
+    openCloseManageAdminDialog()
+
+    setTimeout(()=>{
+        setAlert({})
+    },2000)
   }
 
   const { msg } = alert
@@ -172,7 +210,7 @@ const Settings = () => {
               {msg && <Alert alert={alert}/>}
             </div>
             <div className="bg-admin-primary w-full rounded-md">
-              <div className="md:mt-0 rounded-md mt-3 p-4 flex flex-col h-full justify-around w-full ">
+              <div className="md:mt-0 mt-3 rounded-md p-4 flex flex-col h-full justify-around w-full ">
                 <button 
                   type="button"
                   className="bg-admin-secondary border border-admin-light py-5 text-almost-white font-bold uppercase hover:bg-admin-primary"
@@ -180,14 +218,31 @@ const Settings = () => {
                 >
                   Create Admin
                 </button>
-                <button className="bg-admin-secondary border border-admin-light py-5 text-almost-white font-bold uppercase hover:bg-admin-primary">Reset Admin Password</button>
-                <button className="bg-admin-secondary border border-admin-light py-5 text-almost-white font-bold uppercase hover:bg-admin-primary">Deactivate Admin</button>
+                <button 
+                  className="md:mt-0 mt-3 bg-admin-secondary border border-admin-light py-5 text-almost-white font-bold uppercase hover:bg-admin-primary"
+                  onClick={()=>{
+                    setDeactivate(false)
+                    openCloseManageAdminDialog()
+                  }}
+                >
+                  Reset Admin Password
+                </button>
+                <button 
+                  className="md:mt-0 mt-3 bg-admin-secondary border border-admin-light py-5 text-almost-white font-bold uppercase hover:bg-admin-primary"
+                  onClick={()=>{
+                    setDeactivate(true)
+                    openCloseManageAdminDialog()
+                  }}
+                >
+                  Activate<span className="text-admin-light px-1">/</span>Disable Admin
+                </button>
               </div>
             </div>
           </div>
         )
       }
       <DialogCreateAdmin handleCreateAdmin={handleCreateAdmin} />
+      <DialogManageAdmin handlePasswordReset={handlePasswordReset} handleActivateDisableAdmin={handleActivateDisableAdmin} deactivate={deactivate} />
     </>
   )
 }

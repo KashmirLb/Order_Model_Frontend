@@ -13,8 +13,8 @@ const adminLinks =[
 
 const userLinks =[
   {name: "Home", link: "/user"},
-  {name: "Messages", link: "messages"},
   {name: "My Orders", link: "orders"},
+  {name: "Messages", link: "messages"},
   {name: "My items", link: "items"},
   {name: "Settings", link: "settings"},
 ]

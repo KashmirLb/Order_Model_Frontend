@@ -2,12 +2,17 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import useData from '../hooks/useData'
 import { generatePassword } from '../helpers'
+import { useEffect } from 'react'
 
 export default function DialogPasswordReset({handlePasswordReset}) {
 
     const [ password, setPassword ] = useState("")
-  
+
     const { openPasswordResetDialog, openClosePasswordResetDialog, customerData } = useData()
+
+    useEffect(()=>{
+      setPassword("")
+    },[openPasswordResetDialog])
 
     const handleGeneratePassword = () =>{
         setPassword(generatePassword())
