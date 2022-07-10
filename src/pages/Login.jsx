@@ -9,7 +9,7 @@ const Login = () => {
     const [ username, setUsername ] = useState("")
     const [ password, setPassword ] = useState("")
     const [ alert, setAlert ] = useState({})
-    const { setAuth, setLoading, prepareSearchList } = useAuth()
+    const { setLoading, obtainUser } = useAuth()
     const navigate = useNavigate()
 
     const handleSubmit = async e => {
@@ -30,17 +30,14 @@ const Login = () => {
             if(username.charAt(0)==="E"){
                 const { data } = await axiosClient.post('/admin/login', { username, password })
                 sessionStorage.setItem("admintoken", data.token)
-                setAuth(data)
+                await obtainUser()
                 setLoading(false)
-                navigate("/admin-console")
-                prepareSearchList()
             }
             else{
                 const { data } = await axiosClient.post('/user/user-login', { username, password })
                 sessionStorage.setItem("usertoken", data.token)
-                setAuth(data)
+                await obtainUser()
                 setLoading(false)
-                navigate("/user")
             }
             
         } catch (error) {

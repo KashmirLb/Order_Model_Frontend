@@ -12,7 +12,6 @@ const UserProvider = ({children}) =>{
     const [ userCommentList, setUserCommentList ] = useState([])
     const [ userItems, setUserItems ] = useState([])
     const [ userItemData, setUserItemData ] = useState({})
-    const [ newMessages, setNewMessages ] = useState([])
     const [ openChangePasswordDialog, setOpenChangePasswordDialog ] = useState(false)
     const [ openChangeContactDialog, setOpenChangeContactDialog ] = useState(false)
     const [ openDeleteAccountDialog, setOpenDeleteAccountDialog ] = useState(false)
@@ -306,6 +305,22 @@ const UserProvider = ({children}) =>{
         setUserItemData({})
     }
 
+    const userRemoveFirstLogin = async ()=>{
+
+        const userToken = sessionStorage.getItem('usertoken')
+
+        if(!userToken){
+               return
+        }
+        try{
+            await axiosClient.put("/user/remove-first-login", {}, config(userToken))
+
+        } catch (error) {
+            console.log(error.response.data.msg)
+        }
+
+    }
+
     return(
         <UserContext.Provider
             value={{
@@ -333,7 +348,8 @@ const UserProvider = ({children}) =>{
                 openCloseDeleteAccountDialog,
                 openDeleteAccountDialog,
                 deleteAccount,
-                logoutUser
+                logoutUser,
+                userRemoveFirstLogin
             }}
         >
             {children}

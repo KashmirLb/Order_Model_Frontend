@@ -8,6 +8,7 @@ import SearchBar from './SearchBar'
 export default function DialogManageAdmin({handlePasswordReset, handleActivateDisableAdmin, deactivate}) {
 
     const [ password, setPassword ] = useState("")
+    const [ firstLogin, setFirstLogin ] = useState(true)
   
     const { openManageAdminDialog, openCloseManageAdminDialog, obtainAdminList, adminList, customerData } = useData()
     
@@ -19,6 +20,10 @@ export default function DialogManageAdmin({handlePasswordReset, handleActivateDi
     const handleGeneratePassword = () =>{
         setPassword(generatePassword())
     }
+
+    const handleFirstLogin = () =>{
+      setFirstLogin(!firstLogin)
+  }
 
     return (
       <>  
@@ -54,7 +59,7 @@ export default function DialogManageAdmin({handlePasswordReset, handleActivateDi
                     >
                       {deactivate ? "Activate / Disable admin" : "Reset Password"}
                     </Dialog.Title>
-                    <form onSubmit={e=> deactivate ? handleActivateDisableAdmin(e) : handlePasswordReset(e, password)}>
+                    <form onSubmit={e=> deactivate ? handleActivateDisableAdmin(e) : handlePasswordReset(e, password, firstLogin)}>
                       <div className="bg-admin-secondary px-2 pt-2 pb-5 mt-3 rounded-md">
                         { adminList.length && <SearchBar searchList={adminList} sidebar={false}/> }
                         <div className=" text-almost-white bg-admin-primary p-3 m-1 rounded-md border border-admin-light mt-2">
@@ -67,6 +72,7 @@ export default function DialogManageAdmin({handlePasswordReset, handleActivateDi
                         </div>
                       </div>
                       { !deactivate && (
+                        <>
                           <div className="p-3 text-admin-light">
                               <label className=" block">Enter a new password:</label>
                               <button
@@ -82,6 +88,17 @@ export default function DialogManageAdmin({handlePasswordReset, handleActivateDi
                                   onChange={e=>setPassword(e.target.value)}
                               />
                           </div>
+                          <div 
+                            className="py-4 text-admin-light font-bold"
+                          >
+                            <label className="pl-6 pr-2">Change password on first login: </label>
+                            <input 
+                                onChange={handleFirstLogin} 
+                                type="checkbox" defaultChecked={true} 
+                                className="bg-admin-secondary border border-admin-light"
+                            />
+                          </div>
+                      </>
                       )}
                           <div className="mt-4 flex justify-around">
                               <button

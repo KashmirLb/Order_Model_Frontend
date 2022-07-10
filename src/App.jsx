@@ -23,6 +23,7 @@ import UserOrder from './pages/userOrder'
 import UserItems from './pages/UserItems'
 import UserItem from './pages/UserItem'
 import UserProfile from './pages/UserProfile'
+import FirstLogin from './pages/FirstLogin'
 
 function App() {
  
@@ -37,6 +38,7 @@ function App() {
               </Route>
               <Route path="/admin-console" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard/>}/>
+                <Route path="first-login" element={<FirstLogin />}/>
                 <Route path="messages" element={<Messages/>}/>
                 <Route path="users" element={<Customers/>}/>
                 <Route path="users/:id" element={<Customer/>}/>
@@ -49,6 +51,7 @@ function App() {
               </Route>
               <Route path="/user" element={<UserLayout/>}>
                 <Route index element={<UserDashboard/>}/>
+                <Route path="first-login" element={<FirstLogin />}/>
                 <Route path="messages" element={<UserMessages/>}/>
                 <Route path="orders" element={<UserOrders/>}/>
                 <Route path="orders/:id" element={<UserOrder/>}/>

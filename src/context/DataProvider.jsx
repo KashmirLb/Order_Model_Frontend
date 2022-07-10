@@ -715,6 +715,20 @@ const DataProvider = ({children}) =>{
         }    
     }
 
+    const removeFirstLogin = async ()=>{
+        const adminToken = sessionStorage.getItem('admintoken')
+    
+        if(!adminToken){
+               return
+        }
+
+        try {
+            await axiosClient.put("admin/remove-first-login", {}, config(adminToken))
+        } catch (error) {
+            console.log(error)
+        }    
+    }
+
     const logoutAdminData = () =>{
         setCustomers([])
         setCustomerData({})
@@ -789,7 +803,8 @@ const DataProvider = ({children}) =>{
                 openCloseManageAdminDialog,
                 adminPasswordReset,
                 activateDisableAdmin,
-                logoutAdminData
+                logoutAdminData,
+                removeFirstLogin
             }}
         >
             {children}

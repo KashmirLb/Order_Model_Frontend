@@ -46,8 +46,14 @@ const AuthProvider = ({children}) =>{
                 const { data } = await axiosClient('/admin/check-admin', config(adminToken))
 
                 setAuth(data)
-                navigate("/admin-console")
-                prepareSearchList()
+
+                if(data.firstLogin){
+                    navigate("/admin-console/first-login")
+                }
+                else{
+                    navigate("/admin-console")
+                    prepareSearchList()
+                }
             } catch (error) {
                 console.log(error)
             }
@@ -63,7 +69,14 @@ const AuthProvider = ({children}) =>{
                 const { data } = await axiosClient('/user/profile', config(token))
 
                 setAuth(data)
-                navigate("/user")
+                
+
+                if(data.firstLogin){
+                    navigate("/user/first-login")
+                }
+                else{
+                    navigate("/user")
+                }
             } catch (error) {
                 console.log(error)
             }

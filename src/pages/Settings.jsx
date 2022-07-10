@@ -81,7 +81,7 @@ const Settings = () => {
     return addingAdmin
   }
 
-  const handlePasswordReset = async (e, password)=>{
+  const handlePasswordReset = async (e, password, firstLogin)=>{
     e.preventDefault()
 
     if(password===""){
@@ -96,7 +96,7 @@ const Settings = () => {
       return
   }
 
-  const reset = await adminPasswordReset({_id: customerData._id, password})
+  const reset = await adminPasswordReset({_id: customerData._id, password, firstLogin})
   
   setAlert(reset)
   openCloseManageAdminDialog()
