@@ -16,7 +16,7 @@ const userLinks =[
   {name: "My Orders", link: "orders"},
   {name: "Messages", link: "messages"},
   {name: "My items", link: "items"},
-  {name: "Settings", link: "settings"},
+  {name: "Profile", link: "profile"},
 ]
 
 const Sidebar = () => {

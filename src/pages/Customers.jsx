@@ -38,7 +38,7 @@ const Customers = () => {
         className="p-2 bg-admin-light text-lg shadow-md m-4 rounded-md font-bold hover:bg-admin-light-h transition-colors"
         onClick={openCloseUserDialog}
       >New Customer</button>
-      <div className="m-1 my-3 md:m-4 md:mt-2 bg-admin-primary rounded-lg">
+      <div className="m-1 my-3 md:m-3 md:mt-2 bg-admin-primary rounded-lg">
         <div className=" text-admin-light p-4 flex">
           <div>
             <label className="text-lg">Sort by:</label>

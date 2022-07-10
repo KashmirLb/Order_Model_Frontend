@@ -54,7 +54,7 @@ export default function DialogPasswordReset({handlePasswordReset}) {
                     </Dialog.Title>
                     <form onSubmit={e=>handlePasswordReset(e, {_id: customerData._id, password: password})}>
                         <div className="p-3 text-admin-light">
-                            <label className=" block">Enter a new password:</label>
+                            <label className="block" htmlFor='password'>Enter a new password:</label>
                             <button
                                 type="button" 
                                 className="mt-2 px-2 bg-admin-primary rounded-md text-almost-white border border-admin-light"
@@ -63,6 +63,7 @@ export default function DialogPasswordReset({handlePasswordReset}) {
                                 Generate
                             </button>
                             <input
+                                id="password"
                                 className="text-almost-white bg-admin-primary mt-3 ml-6 px-2 border border-admin-light rounded-sm"
                                 value={password}
                                 onChange={e=>setPassword(e.target.value)}

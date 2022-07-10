@@ -15,6 +15,8 @@ const Login = () => {
     const handleSubmit = async e => {
         e.preventDefault()
         setAlert({})
+        sessionStorage.removeItem("admintoken")
+        sessionStorage.removeItem("usertoken")
 
         if([username, password].includes("")){
             setAlert({

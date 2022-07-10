@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import useData from "../hooks/useData"
 import { formatDate } from "../helpers"
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
           New Customer
         </button>
       </div>
-      <div className="text-almost-white p-2 flex flex-col gap-3">
+      <div className="text-almost-white p-3 flex flex-col gap-3">
         <div className="bg-admin-primary p-3 rounded-md">
           <div className="bg-admin-secondary rounded-md p-3 pt-0 ">
             <h2 className="text-admin-light text-2xl ml-5 font-bold">New Messages:</h2>

@@ -18,6 +18,11 @@ import CreateOrder from './pages/CreateOrder'
 import Order from './pages/Order'
 import UserMessages from './pages/UserMessages'
 import UserOrders from './pages/UserOrders'
+import { UserProvider } from './context/UserProvider'
+import UserOrder from './pages/userOrder'
+import UserItems from './pages/UserItems'
+import UserItem from './pages/UserItem'
+import UserProfile from './pages/UserProfile'
 
 function App() {
  
@@ -25,30 +30,34 @@ function App() {
     <BrowserRouter> 
       <AuthProvider>
         <DataProvider>
-          <Routes>
-            <Route path="/" element={<NotAuthLayout />}>
-              <Route index element={<Login />} />
-            </Route>
-            <Route path="/admin-console" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard/>}/>
-              <Route path="messages" element={<Messages/>}/>
-              <Route path="users" element={<Customers/>}/>
-              <Route path="users/:id" element={<Customer/>}/>
-              <Route path="orders" element={<Orders/>}/>
-              <Route path="orders/create" element={<CreateOrder/>}/>
-              <Route path="orders/:id" element={<Order/>}/>
-              <Route path="items" element={<Items/>}/>
-              <Route path="items/:id" element={<Item/>}/>
-              <Route path="settings" element={<Settings/>}/>
-            </Route>
-            <Route path="/user" element={<UserLayout/>}>
-              <Route index element={<UserDashboard/>}/>
-              <Route path="messages" element={<UserMessages/>}/>
-              <Route path="orders" element={<UserOrders/>}/>
-              <Route path="items" element={<Items/>}/>
-              <Route path="settings" element={<Settings/>}/>
-            </Route>
-          </Routes>
+          <UserProvider>
+            <Routes>
+              <Route path="/" element={<NotAuthLayout />}>
+                <Route index element={<Login />} />
+              </Route>
+              <Route path="/admin-console" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard/>}/>
+                <Route path="messages" element={<Messages/>}/>
+                <Route path="users" element={<Customers/>}/>
+                <Route path="users/:id" element={<Customer/>}/>
+                <Route path="orders" element={<Orders/>}/>
+                <Route path="orders/create" element={<CreateOrder/>}/>
+                <Route path="orders/:id" element={<Order/>}/>
+                <Route path="items" element={<Items/>}/>
+                <Route path="items/:id" element={<Item/>}/>
+                <Route path="settings" element={<Settings/>}/>
+              </Route>
+              <Route path="/user" element={<UserLayout/>}>
+                <Route index element={<UserDashboard/>}/>
+                <Route path="messages" element={<UserMessages/>}/>
+                <Route path="orders" element={<UserOrders/>}/>
+                <Route path="orders/:id" element={<UserOrder/>}/>
+                <Route path="items" element={<UserItems/>}/>
+                <Route path="items/:id" element={<UserItem/>}/>
+                <Route path="profile" element={<UserProfile/>}/>
+              </Route>
+            </Routes>
+          </UserProvider>
         </DataProvider>
       </AuthProvider>
     </BrowserRouter>

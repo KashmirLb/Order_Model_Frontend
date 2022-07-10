@@ -18,7 +18,7 @@ const UserLayout = () => {
                     <Header />
                     <div className="md:flex">
                         <Sidebar/>
-                        <main>
+                        <main className="md:w-3/4 lg:w-4/5">
                             <Outlet />
                         </main>
                     </div>

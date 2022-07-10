@@ -147,6 +147,10 @@ const Settings = () => {
                 }
               </div>
               <div className="py-5 text-lg font-bold uppercase grid grid-cols-2">
+                <div className="text-admin-light">Custom ID: </div>
+                {auth.adminId}
+              </div>
+              <div className="py-5 text-lg font-bold uppercase grid grid-cols-2">
                 <div className="text-admin-light">Name: </div>
                 {editingAdmin ? (
                   <input 
