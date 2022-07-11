@@ -217,7 +217,6 @@ const CreateOrder = () => {
                                             <option key={item._id} value={item.customId}>{item.customId} - {item.name}</option>
                                             ))
                                         }
-                                        <option value="None" className="text-red-700 uppercase font-bold">None</option>
                                     </select>
                                     <Popover className="relative w-1/2">
                                         <Popover.Button className="block text-almost-white m-1 hover:text-admin-light transition-colors">
