@@ -4,6 +4,7 @@ import useData from "../hooks/useData"
 import Spinner from "../components/Spinner"
 import Alert from "../components/Alert"
 import { formatDate } from "../helpers"
+import useAuth from "../hooks/useAuth"
 
 const Order = () => {
 
@@ -20,6 +21,7 @@ const Order = () => {
   const navigate = useNavigate()
 
   const { orderData, obtainOrderData, setOrderData, commentIsRead, createComment, updateOrder, addLastViewedOrder } = useData()
+  const { auth } = useAuth()
 
   useEffect(()=>{
     setOrderData({})
@@ -61,7 +63,12 @@ const Order = () => {
     updatedOrder.status = updatedStatus
     
     try {
-      await updateOrder(updatedOrder)
+      const commentAdded = await updateOrder(updatedOrder)
+
+      if(commentAdded){
+        commentAdded.admin = { name: auth.name}
+        updatedOrder.comments = [commentAdded, ...updatedOrder.comments]
+      }
       setOrderData(updatedOrder)
       setAlert({
         msg: "Updated correctly",

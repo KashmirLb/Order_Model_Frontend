@@ -461,7 +461,12 @@ const DataProvider = ({children}) =>{
         }
 
         try {
-            await axiosClient.put("order/update-order", order, config(adminToken))
+            const { data } = await axiosClient.put("order/update-order", order, config(adminToken))
+
+            if(data.commentAdded){
+                return data.commentAdded
+            }
+            
         } catch (error) {
             console.log(error.response.data.msg)
         }    

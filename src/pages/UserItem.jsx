@@ -55,7 +55,7 @@ const UserItem = () => {
                             <tr className="h-2"></tr>
                             <tr className="bg-user-primary">
                                 <td className="p-2">Description:</td>
-                                <td className="text-almost-white">
+                                <td className="text-almost-white whitespace-pre-wrap w-full">
                                     {description && description}
                                 </td>
                             </tr>

@@ -140,11 +140,11 @@ const Item = () => {
                             <tr className="h-2"></tr>
                             <tr className="bg-admin-primary">
                                 <td className="p-2">Description:</td>
-                                <td className="text-almost-white">
+                                <td className="text-almost-white w-full whitespace-pre-wrap">
                                     {
                                         editItem ? (
                                             <textarea 
-                                            className="text-almost-black p-2 my-2 rounded-sm bg-gray-50 h-20"
+                                            className="text-almost-black p-2 my-2 rounded-sm bg-gray-50 w-full"
                                             value={editDescription}
                                             onChange={e=>setEditDescription(e.target.value)}
                                           />
