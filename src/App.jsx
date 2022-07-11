@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthProvider'
-import NotAuthLayout from './layout/notAuthLayout.jsx'
+import { DataProvider } from './context/DataProvider'
+import { UserProvider } from './context/UserProvider'
+import NotAuthLayout from './layout/notAuthLayout'
 import AdminLayout from './layout/AdminLayout'
 import UserLayout from './layout/UserLayout'
 import Login from './pages/Login'
@@ -13,12 +15,10 @@ import Orders from './pages/Orders'
 import Items from './pages/Items'
 import Item from './pages/Item'
 import Settings from './pages/Settings'
-import { DataProvider } from './context/DataProvider'
 import CreateOrder from './pages/CreateOrder'
 import Order from './pages/Order'
 import UserMessages from './pages/UserMessages'
 import UserOrders from './pages/UserOrders'
-import { UserProvider } from './context/UserProvider'
 import UserOrder from './pages/userOrder'
 import UserItems from './pages/UserItems'
 import UserItem from './pages/UserItem'
@@ -36,7 +36,7 @@ function App() {
               <Route path="/" element={<NotAuthLayout/>}>
                 <Route index element={<Login/>} />
               </Route>
-              <Route path="/admin-console" element={<AdminLayout />}>
+              <Route path="/admin-console" element={<AdminLayout/>}>
                 <Route index element={<AdminDashboard/>}/>
                 <Route path="first-login" element={<FirstLogin />}/>
                 <Route path="messages" element={<Messages/>}/>
