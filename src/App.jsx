@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthProvider'
-import NotAuthLayout from './layout/notAuthLayout'
+import NotAuthLayout from './layout/notAuthLayout.jsx'
 import AdminLayout from './layout/AdminLayout'
 import UserLayout from './layout/UserLayout'
 import Login from './pages/Login'
@@ -33,8 +33,8 @@ function App() {
         <DataProvider>
           <UserProvider>
             <Routes>
-              <Route path="/" element={<NotAuthLayout />}>
-                <Route index element={<Login />} />
+              <Route path="/" element={<NotAuthLayout/>}>
+                <Route index element={<Login/>} />
               </Route>
               <Route path="/admin-console" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard/>}/>
