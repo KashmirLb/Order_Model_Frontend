@@ -52,7 +52,7 @@ const Login = () => {
 
   return (
     <>
-        <h1 className="text-8xl capitalize font-bold text-user-primary py-10">Store Model</h1>
+        <h1 className="text-8xl capitalize font-bold text-user-primary py-10">Order Model</h1>
         <form className="p-10 bg-white rounded-md shadow "
             onSubmit={handleSubmit}
         >

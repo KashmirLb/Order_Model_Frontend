@@ -21,7 +21,7 @@ const Header = () => {
 
   return (
     <header className={`${auth.adminId ? "bg-admin-primary" : "bg-user-primary"} py-5 md:flex justify-between items-center px-8 md:max-h-32`}>
-        <img src="/small-logo.png" alt="small-logo" className="mb-4 mx-auto md:m-0 hover:cursor-pointer" onClick={()=>navigate("/admin-console")}/>
+        <img src="/order-model.png" alt="small-logo" width={150} className="mb-4 mx-auto md:m-0 hover:cursor-pointer" onClick={()=>navigate("/admin-console")}/>
         <div className="flex items-center gap-5 justify-center ">
             <div className={`${auth.adminId ? "text-admin-light" : "text-user-light"} text-xl font-bold`}>
                 Logged in as: <span className="text-almost-white">{auth?.name && auth.name} ({auth?.customId ? auth.customId : auth.adminId})</span>
